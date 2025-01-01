@@ -15,12 +15,9 @@ export default function HomeScreen() {
           resizeMode='cover'
           style = {styles.bg}>
 
-      <ThemedView style={styles.titleContainer}>
-      </ThemedView>
-      
-      <ThemedView style={styles.stepContainer}>
-      </ThemedView>
+      <View style = {styles.empty}> </View>
 
+    <ThemedView style={styles.container}>
       <Link href='/journal' style = {{marginHorizontal: 'auto'}} asChild>
         <Pressable style = {styles.button}>
           <ThemedText style = {styles.buttonText}>
@@ -28,9 +25,6 @@ export default function HomeScreen() {
           </ThemedText>
         </Pressable>
       </Link>
-
-      <ThemedView style={styles.stepContainer}>
-      </ThemedView>
 
       <Link href='/highlight' style = {{marginHorizontal: 'auto'}} asChild>
         <Pressable style = {styles.button}>
@@ -40,9 +34,6 @@ export default function HomeScreen() {
         </Pressable>
       </Link>
 
-      <ThemedView style={styles.stepContainer}>
-      </ThemedView>
-
       <Link href='/sleep' style = {{marginHorizontal: 'auto'}} asChild>
         <Pressable style = {styles.button}>
           <ThemedText style = {styles.buttonText}>
@@ -50,9 +41,6 @@ export default function HomeScreen() {
           </ThemedText>
         </Pressable>
       </Link>
-
-      <ThemedView style={styles.stepContainer}>
-      </ThemedView>
 
       <Link href='/habits' style = {{marginHorizontal: 'auto'}} asChild>
         <Pressable style = {styles.button}>
@@ -62,9 +50,6 @@ export default function HomeScreen() {
         </Pressable>
       </Link>
 
-      <ThemedView style={styles.stepContainer}>
-      </ThemedView>
-
       <Link href='/rate' style = {{marginHorizontal: 'auto'}} asChild>
         <Pressable style = {styles.button}>
           <ThemedText style = {styles.buttonText}>
@@ -72,6 +57,7 @@ export default function HomeScreen() {
           </ThemedText>
         </Pressable>
       </Link>
+    </ThemedView>
 
     </ImageBackground>
   );
@@ -86,20 +72,22 @@ const styles = StyleSheet.create({
     justifyContent : 'center',
     alignContent : 'center'
   },
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  empty : {
+    backgroundColor : 'rgba(71, 101, 127, 0.75)',
+    width : '85%',
+    height : '40%',
+    justifyContent : 'center',
+    alignItems : 'center',
+    marginTop : 20,
+    marginLeft : 30,
+
   },
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 16,
+    gap: 14,
+    backgroundColor : 'rgba(25, 2, 12, 1)'
   },
   button :{
     height : 55,
