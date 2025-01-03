@@ -18,7 +18,7 @@ export default function HomeScreen() {
       <View style = {styles.empty}> </View>
 
     <ThemedView style={styles.container}>
-      <Link href='/journal' style = {{marginHorizontal: 'auto'}} asChild>
+      <Link href='/journallistscreen' style = {{marginHorizontal: 'auto'}} asChild>
         <Pressable style = {styles.button}>
           <ThemedText style = {styles.buttonText}>
             Journal
