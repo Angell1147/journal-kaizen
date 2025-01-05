@@ -51,7 +51,7 @@ export default function JournalsListScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFAF3',
+    backgroundColor: '#DCEDF0',
     padding: 20,
   },
   title: {
