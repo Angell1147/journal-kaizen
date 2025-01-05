@@ -13,6 +13,6 @@
     "**/*.tsx",
     "**/*.jsx",
     ".expo/types/**/*.ts",
-    "expo-env.d.ts",
-    "app/(tabs)/journal.jsx"  ]
+    "expo-env.d.ts"
+  ]
 }
