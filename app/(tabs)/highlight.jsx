@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, TextInput, Modal } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, TextInput, Modal, ImageBackground } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MaterialCommunityIcons } from '@expo/vector-icons'; // Use any icon library you prefer
 import { Calendar } from 'react-native-calendars'; // Import Calendar component
+import bgcolor from "@/assets/images/bg2.png"
 
 export default function HighlightsScreen() {
+
+            
   const [highlights, setHighlights] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [newHighlight, setNewHighlight] = useState('');
-  const [isCalendarVisible, setIsCalendarVisible] = useState(false); // Show calendar on button click
+  const [isCalendarVisible, setIsCalendarVisible] = useState(false); // Show calendar on button click  
   const [markedDates, setMarkedDates] = useState({});
 
-  // Get today's date in the format "Month Day" (e.g., "Jan 15")
   const getTodayDate = () => {
     const today = new Date();
     const month = today.toLocaleString('default', { month: 'short' });
@@ -42,6 +44,7 @@ export default function HighlightsScreen() {
     highlights.forEach((highlight) => {
       const [month, day] = highlight.date.split(' ');
       const formattedDate = `${month} ${day}`;
+      console.log(markedDates);
       newMarkedDates[formattedDate] = {
         marked: true,
         dotColor: 'blue',
@@ -108,94 +111,101 @@ export default function HighlightsScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>THE DAY THAT WAS</Text>
+    <ImageBackground 
+      source={bgcolor} 
+      resizeMode="cover" 
+      style={styles.bg}>
+    
+      <View style={styles.container}>
+        <Text style={styles.header}>THE DAY THAT WAS</Text>
 
-      {/* Displaying the calendar */}
-      {isCalendarVisible && (
-        <View style={styles.calendarContainer}>
-          <Calendar
-            markedDates={markedDates} // Marked dates from state
-            markingType={'multi-dot'}
-            onDayPress={(day) => {
-              console.log('Selected day:', day);
-            }}
-            renderDay={(day, selectedDate, inRange) => {
-                const isMarked = markedDates[day.dateString];
-                return (
-                  <View style={{ alignItems: 'center' }}>
-                    {/* Render the date */}
-                    <Text style={styles.calendarDate}>{day.day}</Text>
-              
-                    {/* Show green tick if date is marked */}
-                    {isMarked && (
-                      <MaterialCommunityIcons
-                        name="check-circle"
-                        size={20}
-                        color="green"
-                        style={{ marginTop: 5 }} // Adjust for spacing if needed
-                      />
-                    )}
-                  </View>
-                );
+        {/* Displaying the calendar */}
+        {isCalendarVisible && (
+          <View style={styles.calendarContainer}>
+            <Calendar
+              markedDates={markedDates} // Marked dates from state
+              markingType={'multi-dot'}
+              onDayPress={(day) => {
+                console.log('Selected day:', day);
               }}
-              
-          />
-        </View>
-      )}
-
-      <FlatList
-        data={highlights}
-        keyExtractor={(item, index) => index.toString()} // Add keyExtractor
-        renderItem={renderItem}
-        contentContainerStyle={styles.listContent} // Add padding to the list
-      />
-
-      {/* Floating Calendar Button */}
-      <TouchableOpacity
-        style={styles.floatingCalendarButton}
-        onPress={() => setIsCalendarVisible(!isCalendarVisible)} // Toggle calendar visibility
-      >
-        <MaterialCommunityIcons name="calendar" size={30} color="white" />
-      </TouchableOpacity>
-
-      {/* Floating Write Button */}
-      <TouchableOpacity
-        style={styles.floatingButton}
-        onPress={() => setIsModalVisible(true)}
-      >
-        <MaterialCommunityIcons name="pencil" size={30} color="white" />
-      </TouchableOpacity>
-
-      {/* Modal for Writing a Highlight */}
-      <Modal
-        visible={isModalVisible}
-        animationType="slide"
-        transparent={true}
-        onRequestClose={() => setIsModalVisible(false)}
-      >
-        <View style={styles.modalBackground}>
-          <View style={styles.modalContainer}>
-            <Text style={styles.modalTitle}>Add a Highlight</Text>
-            <TextInput
-              style={styles.textInput}
-              placeholder="Write your highlight..."
-              value={newHighlight}
-              onChangeText={setNewHighlight}
-              multiline
+              renderDay={(day, selectedDate, inRange) => {
+                  const isMarked = markedDates[day.dateString];
+                  console.log('Day:', day.dateString, 'IsMarked:', isMarked);
+                  return (
+                    <View style={{ alignItems: 'center' }}>
+                      {/* Render the date */}
+                      <Text style={styles.calendarDate}>{day.day}</Text>
+                
+                      {/* Show green tick if date is marked */}
+                      {isMarked && (
+                        <MaterialCommunityIcons
+                          name="check-circle"
+                          size={20}
+                          color="green"
+                          style={{ marginTop: 5 }} // Adjust for spacing if needed
+                        />
+                      )}
+                    </View>
+                  );
+                }}
+                
             />
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity style={styles.button} onPress={saveHighlight}>
-                <Text style={styles.buttonText}>Save</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.button} onPress={() => setIsModalVisible(false)}>
-                <Text style={styles.buttonText}>Cancel</Text>
-              </TouchableOpacity>
+          </View>
+        )}
+
+        <FlatList
+          data={highlights}
+          keyExtractor={(item, index) => index.toString()} // Add keyExtractor
+          renderItem={renderItem}
+          contentContainerStyle={styles.listContent} // Add padding to the list
+        />
+
+        {/* Floating Calendar Button */}
+        <TouchableOpacity
+          style={styles.floatingCalendarButton}
+          onPress={() => setIsCalendarVisible(!isCalendarVisible)} // Toggle calendar visibility
+        >
+          <MaterialCommunityIcons name="calendar" size={30} color="white" />
+        </TouchableOpacity>
+
+        {/* Floating Write Button */}
+        <TouchableOpacity
+          style={styles.floatingButton}
+          onPress={() => setIsModalVisible(true)}
+        >
+          <MaterialCommunityIcons name="pencil" size={30} color="white" />
+        </TouchableOpacity>
+
+        {/* Modal for Writing a Highlight */}
+        <Modal
+          visible={isModalVisible}
+          animationType="slide"
+          transparent={true}
+          onRequestClose={() => setIsModalVisible(false)}
+        >
+          <View style={styles.modalBackground}>
+            <View style={styles.modalContainer}>
+              <Text style={styles.modalTitle}>Add a Highlight</Text>
+              <TextInput
+                style={styles.textInput}
+                placeholder="Write your highlight..."
+                value={newHighlight}
+                onChangeText={setNewHighlight}
+                multiline
+              />
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity style={styles.button} onPress={saveHighlight}>
+                  <Text style={styles.buttonText}>Save</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.button} onPress={() => setIsModalVisible(false)}>
+                  <Text style={styles.buttonText}>Cancel</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
-        </View>
-      </Modal>
-    </View>
+        </Modal>
+      </View>
+    </ImageBackground>
   );
 }
 
@@ -203,7 +213,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#FFFAF3',
+    backgroundColor: '#DCEDF0',
   },
   header: {
     fontSize: 22,
@@ -212,6 +222,12 @@ const styles = StyleSheet.create({
     color: '#5C5C5C',
     textAlign: 'center',
   },
+  bg : {
+    height : '100%',
+    width : 'auto',
+    resizeMode : 'cover',
+    justifyContent : 'center',
+},
   listContent: {
     paddingBottom: 80, // Add padding to avoid overlap with the FAB
   },
