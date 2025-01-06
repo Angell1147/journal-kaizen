@@ -19,6 +19,12 @@ export default function JournalsListScreen() {
     fetchJournals();
   }, []);
 
+  const deleteJournal = async (index) => {
+    const updatedJournals = savedJournals.filter((_, i) => i !== index);
+    setSavedJournals(updatedJournals);
+    await AsyncStorage.setItem('journals', JSON.stringify(updatedJournals));
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView>
@@ -26,8 +32,13 @@ export default function JournalsListScreen() {
         {savedJournals.length > 0 ? (
           savedJournals.map((entry, index) => (
             <View key={index} style={styles.journalEntry}>
-              <Text style={styles.journalDate}>{entry.date}</Text>
-              <Text style={styles.journalText}>{entry.text}</Text>
+              <View style={styles.journalTextContainer}>
+                <Text style={styles.journalDate}>{entry.date}</Text>
+                <Text style={styles.journalText}>{entry.text}</Text>
+              </View>
+              <TouchableOpacity onPress={() => deleteJournal(index)} style={styles.deleteButton}>
+                <Icon name="delete" size={24} color="#FF" />
+              </TouchableOpacity>
             </View>
           ))
         ) : (
@@ -60,6 +71,9 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   journalEntry: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     backgroundColor: '#FFF',
     padding: 15,
     borderRadius: 10,
@@ -69,6 +83,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 2,
+  },
+  journalTextContainer: {
+    flex: 1,
   },
   journalDate: {
     fontSize: 14,
@@ -84,6 +101,9 @@ const styles = StyleSheet.create({
     color: '#777',
     textAlign: 'center',
     marginTop: 50,
+  },
+  deleteButton: {
+    marginLeft: 10,
   },
   fab: {
     position: 'absolute',

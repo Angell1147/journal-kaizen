@@ -16,10 +16,12 @@ export default function HighlightsScreen() {
 
   const getTodayDate = () => {
     const today = new Date();
-    const month = today.toLocaleString('default', { month: 'short' });
-    const day = today.getDate();
-    return `${month} ${day}`;
+    const year = today.getFullYear();
+    const month = (today.getMonth() + 1).toString().padStart(2, '0');
+    const day = today.getDate().toString().padStart(2, '0');
+    return `${year}-${month}-${day}`; // YYYY-MM-DD
   };
+  
 
   // Fetch highlights from AsyncStorage on component mount
   useEffect(() => {
@@ -27,32 +29,34 @@ export default function HighlightsScreen() {
       const result = await AsyncStorage.getItem('highlights');
       if (result) {
         const parsedHighlights = JSON.parse(result);
-        // Update all highlights to use today's date
-        const updatedHighlights = parsedHighlights.map((highlight) => ({
-          ...highlight,
-          date: getTodayDate(), // Override the date with today's date
-        }));
-        setHighlights(updatedHighlights);
-        markDatesOnCalendar(updatedHighlights);
+        setHighlights(parsedHighlights);  // Use the original dates without overriding
+        markDatesOnCalendar(parsedHighlights);
       }
     };
+    
     fetchHighlights();
   }, []);
 
   const markDatesOnCalendar = (highlights) => {
     const newMarkedDates = {};
     highlights.forEach((highlight) => {
-      const [month, day] = highlight.date.split(' ');
-      const formattedDate = `${month} ${day}`;
-      console.log(markedDates);
-      newMarkedDates[formattedDate] = {
+      newMarkedDates[highlight.date] = {
         marked: true,
-        dotColor: 'blue',
-        selectedDotColor: 'green', // Green tick for selected date
+        customStyles: {
+          container: {
+            backgroundColor: 'transparent',
+          },
+          text: {
+            color: 'green',
+            fontWeight: 'bold',
+          },
+        },
       };
     });
     setMarkedDates(newMarkedDates);
   };
+  
+  
 
   // Save a new highlight
   const saveHighlight = async () => {
@@ -60,24 +64,20 @@ export default function HighlightsScreen() {
       alert('Please enter a highlight.');
       return;
     }
-
+  
     const newItem = {
-      date: getTodayDate(), // Use today's date
+      date: getTodayDate(), // Use new date format
       text: newHighlight,
     };
-
-    // Update the highlights array and save it
+  
     const updatedHighlights = [...highlights, newItem];
     setHighlights(updatedHighlights);
-
-    // Save to AsyncStorage
     await AsyncStorage.setItem('highlights', JSON.stringify(updatedHighlights));
-
-    // Close modal and reset input
     setIsModalVisible(false);
     setNewHighlight('');
-    markDatesOnCalendar(updatedHighlights);
+    markDatesOnCalendar(updatedHighlights); // Mark the new date
   };
+  
 
   // Delete a highlight
   const deleteHighlight = async (index) => {
@@ -123,11 +123,13 @@ export default function HighlightsScreen() {
         {isCalendarVisible && (
           <View style={styles.calendarContainer}>
             <Calendar
-              markedDates={markedDates} // Marked dates from state
-              markingType={'multi-dot'}
-              onDayPress={(day) => {
-                console.log('Selected day:', day);
-              }}
+            markedDates={markedDates} // Marked dates with tick
+            markingType={'custom'}
+            onDayPress={(day) => {
+              console.log('Selected day:', day.dateString);
+            }}
+
+
               renderDay={(day, selectedDate, inRange) => {
                   const isMarked = markedDates[day.dateString];
                   console.log('Day:', day.dateString, 'IsMarked:', isMarked);
@@ -359,3 +361,5 @@ const styles = StyleSheet.create({
     marginBottom: 5, // Space between date and tick
   },
 });
+
+
