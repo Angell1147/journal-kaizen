@@ -89,26 +89,40 @@ export default function HighlightsScreen() {
   };
 
   // Render each highlight item
-  const renderItem = ({ item, index }) => {
-    const colors = ['#FEE4C4', '#E6D4FF', '#FFEDC5', '#D2EFFF', '#FFE4E6', '#DFFFD4', '#F4DFF5', '#C9FFF7', '#FFF4CC', '#E3DFFB'];
-    const tabColor = colors[index % colors.length]; // Cycle through colors based on index
+  // Helper function to format the date
+const formatDateToMonthDay = (dateString) => {
+  const date = new Date(dateString); // Parse the date
+  if (isNaN(date)) {
+    console.warn(`Invalid date format: ${dateString}`);
+    return dateString; // Return original string if date is invalid
+  }
+  const options = { month: 'short', day: 'numeric' }; // Jan 6
+  return date.toLocaleDateString('en-US', options); // Locale may vary
+};
 
-    // Split item.date into month and day
-    const [month, day] = item.date.split(' ');
+// Render each highlight item
+const renderItem = ({ item, index }) => {
+  const colors = ['#FEE4C4', '#E6D4FF', '#FFEDC5', '#D2EFFF', '#FFE4E6', '#DFFFD4', '#F4DFF5', '#C9FFF7', '#FFF4CC', '#E3DFFB'];
+  const tabColor = colors[index % colors.length]; // Cycle through colors based on index
 
-    return (
-      <View style={[styles.highlightBox, { backgroundColor: tabColor }]}>
-        <View style={styles.dateBox}>
-          <Text style={styles.month}>{month}</Text>
-          <Text style={styles.day}>{day}</Text>
-        </View>
-        <Text style={styles.highlightText}>{item.text}</Text>
-        <TouchableOpacity onPress={() => deleteHighlight(index)} style={styles.deleteButton}>
-          <MaterialCommunityIcons name="trash-can-outline" size={24} color="#5072A7" />
-        </TouchableOpacity>
+  const formattedDate = formatDateToMonthDay(item.date); // Format the date
+
+  const [month, day] = formattedDate.split(' '); // Split the formatted date
+
+  return (
+    <View style={[styles.highlightBox, { backgroundColor: tabColor }]}>
+      <View style={styles.dateBox}>
+        <Text style={styles.month}>{month}</Text>
+        <Text style={styles.day}>{day}</Text>
       </View>
-    );
-  };
+      <Text style={styles.highlightText}>{item.text}</Text>
+      <TouchableOpacity onPress={() => deleteHighlight(index)} style={styles.deleteButton}>
+        <MaterialCommunityIcons name="trash-can-outline" size={24} color="#5072A7" />
+      </TouchableOpacity>
+    </View>
+  );
+};
+
 
   return (
     <ImageBackground 
@@ -306,14 +320,21 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   calendarContainer: {
-    position: 'absolute',
-    bottom: 110, // Adjusted for proper positioning
-    right: 20,
-    width: '80%',
+    position: 'absolute', // Allow it to float over the list
+    zIndex: 10,           // Make sure it stays on top
+    elevation: 10,        // For Android compatibility
+    top: 50,              // Adjust to your preferred vertical position
+    left: 10,             // Adjust for horizontal positioning
+    right: 10,            // Optional for full-width calendar
     backgroundColor: '#FFF',
     borderRadius: 10,
-    elevation: 5,
+    padding: 10,          // Space inside the calendar container
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
+  
   modalBackground: {
     flex: 1,
     justifyContent: 'center',
