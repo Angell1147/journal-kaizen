@@ -1,7 +1,6 @@
-import { Text, View, ImageBackground, StyleSheet } from "react-native";
-import React from "react";
-import bgcolor from '@/assets/images/bg2.png'
-
+import { Text, View, TouchableOpacity, StyleSheet } from "react-native";
+import React, { useState } from "react";  // Add useState import here
+import bgcolor from '@/assets/images/bg2.png';
 
 const MoodTracker = () => {
   const [selectedMood, setSelectedMood] = useState(null);
