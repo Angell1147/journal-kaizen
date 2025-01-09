@@ -1,23 +1,27 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function JournalsListScreen() {
   const [savedJournals, setSavedJournals] = useState([]);
 
-  useEffect(() => {
-    const fetchJournals = async () => {
-      try {
-        const existingJournals = await AsyncStorage.getItem('journals');
-        const journals = existingJournals ? JSON.parse(existingJournals) : [];
-        setSavedJournals(journals);
-      } catch (e) {
-        console.error(e);
-      }
-    };
-    fetchJournals();
-  }, []);
+  const fetchJournals = async () => {
+    try {
+      const existingJournals = await AsyncStorage.getItem('journals');
+      const journals = existingJournals ? JSON.parse(existingJournals) : [];
+      setSavedJournals(journals);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchJournals();
+    }, [])
+  );
 
   const deleteJournal = async (index) => {
     const updatedJournals = savedJournals.filter((_, i) => i !== index);
@@ -58,6 +62,7 @@ export default function JournalsListScreen() {
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {
