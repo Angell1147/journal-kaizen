@@ -1,33 +1,51 @@
-import { Text, View, ImageBackground, StyleSheet } from "react-native";
-import React from "react";
-import bgcolor from '@/assets/images/bg2.png'
-
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
+import { Calendar } from 'react-native-calendars';
+import { PieChart } from 'react-native-chart-kit';
 
 const MoodTracker = () => {
-  const [selectedMood, setSelectedMood] = useState(null);
+  const [selectedDate, setSelectedDate] = useState('');
+  const [moodData, setMoodData] = useState([
+    { name: 'Happy', population: 40, color: '#FFD700', legendFontColor: '#000', legendFontSize: 12 },
+    { name: 'Irritability', population: 20, color: '#FFA500', legendFontColor: '#000', legendFontSize: 12 },
+    { name: 'Anxiety', population: 20, color: '#1E90FF', legendFontColor: '#000', legendFontSize: 12 },
+    { name: 'Elevated', population: 10, color: '#FF69B4', legendFontColor: '#000', legendFontSize: 12 },
+    { name: 'Depressed', population: 10, color: '#FF4500', legendFontColor: '#000', legendFontSize: 12 },
+  ]);
 
-  const moods = ['Depressed', 'Elevated', 'Irritability', 'Anxiety', 'Happy'];
+  const handleDateSelect = (day) => {
+    setSelectedDate(day.dateString);
+  };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.month}>JANUARY</Text>
-      <View style={styles.moodList}>
-        {moods.map((mood, index) => (
-          <TouchableOpacity
-            key={index}
-            style={[
-              styles.moodItem,
-              selectedMood === mood && styles.selectedMoodItem,
-            ]}
-            onPress={() => setSelectedMood(mood)}
-          >
-            <Text style={styles.moodText}>{mood}</Text>
+      <Calendar
+        onDayPress={handleDateSelect}
+        markedDates={{
+          [selectedDate]: { selected: true, selectedColor: '#FFD700' },
+        }}
+        style={styles.calendar}
+      />
+      <View style={styles.moodSelector}>
+        {moodData.map((mood, index) => (
+          <TouchableOpacity key={index} style={[styles.moodButton, { backgroundColor: mood.color }]}>
+            <Text style={styles.moodText}>{index + 1}</Text>
           </TouchableOpacity>
         ))}
       </View>
-      {selectedMood && (
-        <Text style={styles.selectedText}>Selected Mood: {selectedMood}</Text>
-      )}
+      <PieChart
+        data={moodData}
+        width={Dimensions.get('window').width}
+        height={200}
+        chartConfig={{
+          backgroundColor: '#fff',
+          color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+        }}
+        accessor="population"
+        backgroundColor="transparent"
+        paddingLeft="15"
+        absolute
+      />
     </View>
   );
 };
@@ -35,36 +53,27 @@ const MoodTracker = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
     backgroundColor: '#f5f5f5',
-  },
-  month: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 16,
-    textAlign: 'center',
-  },
-  moodList: {
-    alignItems: 'center',
-  },
-  moodItem: {
     padding: 10,
-    marginVertical: 8,
-    backgroundColor: '#e0e0e0',
-    borderRadius: 8,
-    width: '80%',
-    alignItems: 'center',
   },
-  selectedMoodItem: {
-    backgroundColor: '#a0a0a0',
+  calendar: {
+    marginBottom: 10,
+  },
+  moodSelector: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginVertical: 10,
+  },
+  moodButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   moodText: {
-    fontSize: 18,
-  },
-  selectedText: {
-    marginTop: 16,
-    fontSize: 18,
-    textAlign: 'center',
+    color: '#fff',
+    fontWeight: 'bold',
   },
 });
 
