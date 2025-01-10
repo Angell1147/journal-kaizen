@@ -1,7 +1,7 @@
-import { Text, View, ImageBackground, StyleSheet } from "react-native";
-import React from "react";
-import bgcolor from '@/assets/images/bg2.png'
-
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
+import { Calendar } from 'react-native-calendars';
+import { PieChart } from 'react-native-chart-kit';
 
 const MoodTracker = () => {
   const [selectedDate, setSelectedDate] = useState('');
@@ -19,6 +19,7 @@ const MoodTracker = () => {
 
   return (
     <View style={styles.container}>
+      {/* Calendar */}
       <Calendar
         onDayPress={handleDateSelect}
         markedDates={{
@@ -26,6 +27,8 @@ const MoodTracker = () => {
         }}
         style={styles.calendar}
       />
+
+      {/* Mood Selector */}
       <View style={styles.moodSelector}>
         {moodData.map((mood, index) => (
           <TouchableOpacity key={index} style={[styles.moodButton, { backgroundColor: mood.color }]}>
@@ -33,6 +36,8 @@ const MoodTracker = () => {
           </TouchableOpacity>
         ))}
       </View>
+
+      {/* Pie Chart */}
       <PieChart
         data={moodData}
         width={Dimensions.get('window').width}
