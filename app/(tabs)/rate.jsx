@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
-import { Calendar } from 'react-native-calendars';
-import { PieChart } from 'react-native-chart-kit';
+import { Text, View, ImageBackground, StyleSheet } from "react-native";
+import React from "react";
+import bgcolor from '@/assets/images/bg2.png'
+
 
 const MoodTracker = () => {
   const [selectedDate, setSelectedDate] = useState('');
