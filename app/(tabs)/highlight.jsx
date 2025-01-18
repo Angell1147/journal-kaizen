@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MaterialCommunityIcons } from '@expo/vector-icons'; // Use any icon library you prefer
 import { Calendar } from 'react-native-calendars'; // Import Calendar component
 import bgcolor from "@/assets/images/bg2.png"
-
+import { useFocusEffect } from '@react-navigation/native';
 export default function HighlightsScreen() {
 
             
@@ -24,18 +24,24 @@ export default function HighlightsScreen() {
   
 
   // Fetch highlights from AsyncStorage on component mount
-  useEffect(() => {
-    const fetchHighlights = async () => {
-      const result = await AsyncStorage.getItem('highlights');
-      if (result) {
-        const parsedHighlights = JSON.parse(result);
-        setHighlights(parsedHighlights);  // Use the original dates without overriding
-        markDatesOnCalendar(parsedHighlights);
-      }
-    };
-    
-    fetchHighlights();
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchHighlights = async () => {
+        const result = await AsyncStorage.getItem('highlights');
+        if (result) {
+          const parsedHighlights = JSON.parse(result);
+          setHighlights(parsedHighlights); // Set highlights
+          markDatesOnCalendar(parsedHighlights); // Update marked dates
+        }
+      };
+  
+      fetchHighlights(); // Fetch on focus
+  
+      return () => {
+        // Cleanup if necessary (e.g., remove event listeners)
+      };
+    }, [])
+  );
 
   const markDatesOnCalendar = (highlights) => {
     const newMarkedDates = {};
