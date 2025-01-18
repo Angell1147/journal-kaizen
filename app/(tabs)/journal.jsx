@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   highlightInput: {
-    height: 100,
+    height: 120,
     borderColor: '#E5E5E5',
     borderWidth: 1,
     padding: 10,
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   journalInput: {
-    height: 500,
+    height: 540,
     borderColor: '#E5E5E5',
     borderWidth: 1,
     padding: 15,
@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 10,
     alignItems: 'center',
-    marginTop: 10,
+    marginTop: 20,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
