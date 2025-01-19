@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, TouchableOpacity ,FlatList, StyleSheet, ScrollView } from 'react-native';
 import { Svg, G, Path, Text as SvgText } from 'react-native-svg';
 import { generateColor } from './utils';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function WheelOfHabits() {
   const [habits, setHabits] = useState([]);
@@ -11,9 +12,39 @@ export default function WheelOfHabits() {
   const ringThickness = 20; // Thickness of each ring
   const totalDays = 21; // Number of days in a habit cycle
   const sectorAngle = 270; // The total angle of the sector
+  const [completedDays, setCompletedDays] = useState({}); // State to track completed days
 
-  // State to track completed days
-  const [completedDays, setCompletedDays] = useState({});
+  useEffect(() => {
+    loadHabits();
+  }, []);
+
+  useEffect(() => {
+    saveHabits();
+  }, [habits, completedDays]);
+
+  // Save habits and completedDays to AsyncStorage
+  const saveHabits = async () => {
+    try {
+      const data = JSON.stringify({ habits, completedDays });
+      await AsyncStorage.setItem('habitsData', data);
+    } catch (error) {
+      console.error('Error saving habits:', error);
+    }
+  };
+
+  // Load habits and completedDays from AsyncStorage
+  const loadHabits = async () => {
+    try {
+      const data = await AsyncStorage.getItem('habitsData');
+      if (data) {
+        const { habits, completedDays } = JSON.parse(data);
+        setHabits(habits);
+        setCompletedDays(completedDays);
+      }
+    } catch (error) {
+      console.error('Error loading habits:', error);
+    }
+  };
 
   // Add a new habit
   const addHabit = () => {
