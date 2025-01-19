@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, TouchableOpacity ,FlatList, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TextInput, Button, TouchableOpacity ,FlatList, StyleSheet, ScrollView, Modal } from 'react-native';
 import { Svg, G, Path, Text as SvgText } from 'react-native-svg';
 import { generateColor } from './utils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+// import ConfettiCannon from 'react-native-confetti-cannon';
 
 export default function WheelOfHabits() {
   const [habits, setHabits] = useState([]);
@@ -13,6 +14,8 @@ export default function WheelOfHabits() {
   const totalDays = 21; // Number of days in a habit cycle
   const sectorAngle = 270; // The total angle of the sector
   const [completedDays, setCompletedDays] = useState({}); // State to track completed days
+  // const [showConfetti, setShowConfetti] = useState(false);
+  // const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     loadHabits();
@@ -57,6 +60,14 @@ export default function WheelOfHabits() {
     }
   };
 
+  // Delete a habit and its cycle
+  const deleteHabit = (habitId) => {
+    setHabits(habits.filter((habit) => habit.id !== habitId));
+    const updatedCompletedDays = { ...completedDays };
+    delete updatedCompletedDays[habitId];
+    setCompletedDays(updatedCompletedDays);
+  };
+
   // Get a random color for the habit
   const getRandomColor = () => {
     const colors = ['#FF5733', '#33FF57', '#3357FF', '#FF33A1', '#FFC733'];
@@ -72,7 +83,12 @@ export default function WheelOfHabits() {
 
       // Reset the habit if all days are done
       if (allDone) {
+      //   setShowConfetti(true);
+      //   setShowModal(true);
+
         habitDays.fill(false); // Reset all days
+
+      //   setTimeout(() => setShowConfetti(false), 3000);
       }
 
       return { ...prevState, [habitId]: habitDays };
@@ -165,7 +181,13 @@ export default function WheelOfHabits() {
             data={habits}
             keyExtractor={(item) => item.id}
             renderItem={({ item, index }) => 
-            <Text style={[styles.habit, { color: generateColor(index) }]}>{item.name}</Text>}
+            <View style={styles.habitRow}>
+              <Text style={[styles.habit, { color: generateColor(index) }]}>{item.name}</Text>
+              <TouchableOpacity onPress={() => deleteHabit(item.id)} style={styles.deleteButton}>
+                <Text style={styles.deleteButtonText}>Delete</Text>
+              </TouchableOpacity>
+            </View>
+            }
             />
         </View>
 
@@ -184,6 +206,22 @@ export default function WheelOfHabits() {
       </View>
     </ScrollView>
   );
+
+//   // Reward Modal
+// function RewardModal({ visible, onClose }) {
+//   return (
+//     <Modal transparent={true} visible={visible} animationType="fade">
+//       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)' }}>
+//         <View style={{ backgroundColor: 'white', padding: 20, borderRadius: 10 }}>
+//           <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 10 }}>🎉 Congratulations! 🎉</Text>
+//           <Text style={{ marginBottom: 20 }}>You've completed your 21-day habit streak! Keep up the great work!</Text>
+//           <Button title="Continue" onPress={onClose} />
+//         </View>
+//       </View>
+//     </Modal>
+//   );
+// }
+
 }
 
 const styles = StyleSheet.create({
@@ -224,7 +262,7 @@ const styles = StyleSheet.create({
       borderWidth: 3,
       borderColor: '#ddd',
       marginTop: 20, 
-      marginBottom: 20,
+      marginBottom: 0,
       borderRadius: 10,
       alignItems: 'flex-start',
     },
@@ -283,6 +321,22 @@ const styles = StyleSheet.create({
         color: '#FFF',
         fontWeight: 'bold',
         fontSize: 16,
+      },
+      habitRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingVertical: 1,
+      },
+      deleteButton: {
+        backgroundColor: 'red',
+        paddingHorizontal: 12,
+        paddingVertical: 3,
+        borderRadius: 5,
+      },
+      deleteButtonText: {
+        color: 'white',
+        fontSize: 12,
       },
      
     });
