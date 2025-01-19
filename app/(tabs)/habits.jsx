@@ -212,8 +212,9 @@ const styles = StyleSheet.create({
     wheel: {
         alignSelf: 'center',
         justifyContent: 'center',
-        marginTop: 0,
+        marginTop: 20,
         marginLeft: 100,
+        height: 500,
     },
     habitListContainer: {
       width: '100%',
@@ -223,8 +224,9 @@ const styles = StyleSheet.create({
       borderWidth: 3,
       borderColor: '#ddd',
       marginTop: 20, 
+      marginBottom: 20,
       borderRadius: 10,
-      alignItems: 'flex',
+      alignItems: 'flex-start',
     },
     
     //   listSection: {
