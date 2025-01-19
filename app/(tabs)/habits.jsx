@@ -182,6 +182,7 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         justifyContent: 'center',
         marginTop: 0,
+        marginLeft: 100,
     },
     habitListContainer: {
       width: '100%',
