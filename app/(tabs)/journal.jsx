@@ -60,6 +60,11 @@ export default function JournalScreen({ navigation }) {
     }
   };
 
+  const saveBoth = () => {
+    saveHighlight();
+    saveJournal();
+  };
+
   return (
     <ScrollView style={styles.container}>
       {/* Highlight of the Day Section */}
@@ -72,9 +77,10 @@ export default function JournalScreen({ navigation }) {
           multiline
           placeholderTextColor="rgba(0, 0, 0, 0.5)"
         />
-        <TouchableOpacity style={styles.saveButton} onPress={saveHighlight}>
+        {/* <TouchableOpacity style={styles.saveButton} onPress={saveHighlight}>
           <Text style={styles.saveButtonText}>Save Highlight</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
+
       </View>
 
       {/* Journal Writing Section */}
@@ -88,7 +94,7 @@ export default function JournalScreen({ navigation }) {
           multiline
           placeholderTextColor="rgba(0, 0, 0, 0.5)"
         />
-        <TouchableOpacity style={styles.saveButton} onPress={saveJournal}>
+        <TouchableOpacity style={styles.saveButton} onPress={saveBoth}>
           <Text style={styles.saveButtonText}>Save Journal</Text>
         </TouchableOpacity>
       </View>
@@ -126,7 +132,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   highlightInput: {
-    height: 60,
+    height: 120,
     borderColor: '#E5E5E5',
     borderWidth: 1,
     padding: 10,
@@ -141,7 +147,7 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   journalInput: {
-    height: 400,
+    height: 540,
     borderColor: '#E5E5E5',
     borderWidth: 1,
     padding: 15,
@@ -161,7 +167,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 10,
     alignItems: 'center',
-    marginTop: 10,
+    marginTop: 20,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
