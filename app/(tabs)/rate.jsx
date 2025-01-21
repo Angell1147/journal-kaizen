@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, Button, Modal, TouchableOpacity } from "react-native";
+import { View, Text, Button, Modal, TouchableOpacity, ScrollView } from "react-native";
 import { Calendar } from "react-native-calendars";
 import { PieChart } from "react-native-chart-kit";
 import { Dimensions } from "react-native";
@@ -10,6 +10,7 @@ const App = () => {
   const [moods, setMoods] = useState({});
   const [selectedDay, setSelectedDay] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [currentMonth, setCurrentMonth] = useState(new Date().toISOString().slice(0, 7)); // Format: YYYY-MM
 
   // Mood categories
   const moodOptions = [
@@ -31,10 +32,15 @@ const App = () => {
     }
   };
 
+  // Filter moods for the current month
+  const filteredMoods = Object.keys(moods).filter((date) =>
+    date.startsWith(currentMonth)
+  );
+
   // Count moods for pie chart
   const moodCounts = moodOptions.map((mood) => ({
     ...mood,
-    count: Object.values(moods).filter((value) => value === mood.key).length,
+    count: filteredMoods.filter((date) => moods[date] === mood.key).length,
   }));
 
   const pieData = moodCounts
@@ -48,25 +54,30 @@ const App = () => {
     }));
 
   return (
-    <View style={{ flex: 1, padding: 20 }}>
+    <ScrollView style={{ flex: 1, padding: 20 }}>
       {/* Calendar */}
       <Calendar
         onDayPress={(day) => {
           setSelectedDay(day.dateString);
           setModalVisible(true); // Open mood selection modal
         }}
+        onMonthChange={(month) => {
+          setCurrentMonth(month.dateString.slice(0, 7)); // Update current month (YYYY-MM)
+        }}
         markedDates={Object.keys(moods).reduce((acc, date) => {
-          acc[date] = {
-            selected: true,
-            selectedColor: moodOptions.find((m) => m.key === moods[date])?.color,
-          };
+          if (date.startsWith(currentMonth)) {
+            acc[date] = {
+              selected: true,
+              selectedColor: moodOptions.find((m) => m.key === moods[date])?.color,
+            };
+          }
           return acc;
         }, {})}
       />
 
       {/* Pie Chart */}
       <Text style={{ textAlign: "center", marginVertical: 20, fontSize: 18 }}>
-        Mood Distribution
+        Mood Distribution for {currentMonth}
       </Text>
       {pieData.length > 0 ? (
         <PieChart
@@ -83,7 +94,7 @@ const App = () => {
           absolute
         />
       ) : (
-        <Text style={{ textAlign: "center" }}>No moods selected yet.</Text>
+        <Text style={{ textAlign: "center" }}>No moods selected yet for this month.</Text>
       )}
 
       {/* Mood Selection Modal */}
@@ -142,7 +153,7 @@ const App = () => {
           </View>
         </View>
       </Modal>
-    </View>
+    </ScrollView>
   );
 };
 
