@@ -24,24 +24,18 @@ export default function HighlightsScreen() {
   
 
   // Fetch highlights from AsyncStorage on component mount
-  useFocusEffect(
-    React.useCallback(() => {
-      const fetchHighlights = async () => {
-        const result = await AsyncStorage.getItem('highlights');
-        if (result) {
-          const parsedHighlights = JSON.parse(result);
-          setHighlights(parsedHighlights); // Set highlights
-          markDatesOnCalendar(parsedHighlights); // Update marked dates
-        }
-      };
-  
-      fetchHighlights(); // Fetch on focus
-  
-      return () => {
-        // Cleanup if necessary (e.g., remove event listeners)
-      };
-    }, [])
-  );
+  useEffect(() => {
+    const fetchHighlights = async () => {
+      const result = await AsyncStorage.getItem('highlights');
+      if (result) {
+        const parsedHighlights = JSON.parse(result);
+        setHighlights(parsedHighlights);  // Use the original dates without overriding
+        markDatesOnCalendar(parsedHighlights);
+      }
+    };
+    
+    fetchHighlights();
+  }, []);
 
   const markDatesOnCalendar = (highlights) => {
     const newMarkedDates = {};

@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -7,6 +7,7 @@ import { useFocusEffect } from '@react-navigation/native';
 export default function JournalsListScreen() {
   const [savedJournals, setSavedJournals] = useState([]);
 
+  useEffect(() => {
   const fetchJournals = async () => {
     try {
       const existingJournals = await AsyncStorage.getItem('journals');
@@ -16,15 +17,36 @@ export default function JournalsListScreen() {
       console.error(e);
     }
   };
+  fetchJournals();  
+  }, []);
 
-  useFocusEffect(
-    useCallback(() => {
-      fetchJournals();
-    }, [])
-  );
+  // const fetchJournals = async () => {
+  //   try {
+  //     const existingJournals = await AsyncStorage.getItem('journals');
+  //     if (existingJournals) {
+  //       try {
+  //         const journals = JSON.parse(existingJournals);
+  //         setSavedJournals(journals);
+  //       } catch (error) {
+  //         console.error('Error parsing journals:', error);
+  //       }
+  //     } else {
+  //       setSavedJournals([]);
+  //     }
+  //   } catch (e) {
+  //     console.error('Error fetching journals:', e);
+  //   }
+  // };
+
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     fetchJournals();
+  //   }, [])
+  // );
 
   const deleteJournal = async (index) => {
     const updatedJournals = savedJournals.filter((_, i) => i !== index);
+    console.log('Updated Journals: ', updatedJournals);
     setSavedJournals(updatedJournals);
     await AsyncStorage.setItem('journals', JSON.stringify(updatedJournals));
   };
@@ -41,7 +63,7 @@ export default function JournalsListScreen() {
                 <Text style={styles.journalText}>{entry.text}</Text>
               </View>
               <TouchableOpacity onPress={() => deleteJournal(index)} style={styles.deleteButton}>
-                <Icon name="delete" size={24} color="#FF" />
+                <Icon name="delete" size={24} color="#FF0000" />
               </TouchableOpacity>
             </View>
           ))
