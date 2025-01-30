@@ -24,7 +24,7 @@ export default function JournalScreen({ navigation }) {
   // Save Highlight
   const saveHighlight = async () => {
     if (!highlight) {
-      alert('Please write a highlight.');
+      // alert('Please write a highlight.');
       return;
     }
 
@@ -43,7 +43,7 @@ export default function JournalScreen({ navigation }) {
   // Save Journal
   const saveJournal = async () => {
     if (!journal) {
-      alert('Please write a journal entry.');
+      // alert('Please write a journal entry.');
       return;
     }
 
@@ -87,12 +87,13 @@ export default function JournalScreen({ navigation }) {
       <View style={styles.section}>
         <TextInput
           placeholder="START WRITING 
-          your thoughts deserve a space"
+          YOUR THOUGHTS DESERVE A SPACE"
           value={journal}
           onChangeText={setJournal}
           style={styles.journalInput}
           multiline
           placeholderTextColor="rgba(0, 0, 0, 0.5)"
+          textAlign="center"
         />
         <TouchableOpacity style={styles.saveButton} onPress={saveBoth}>
           <Text style={styles.saveButtonText}>Save Journal</Text>
@@ -121,7 +122,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#FFFAF3',
+    backgroundColor: '#DCEDF0',
   },
   section: {
     marginBottom: 30,

@@ -9,12 +9,11 @@ import {
   Platform,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { format } from "date-fns";
+import { format, parseISO } from "date-fns";
 import { LineChart } from "react-native-chart-kit";
 import { Dimensions } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import AsyncStorage from "@react-native-async-storage/async-storage"; // For mobile
-// For web, localStorage is already available globally
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function SleepTracker() {
   const [date, setDate] = useState(new Date());
@@ -27,13 +26,12 @@ export default function SleepTracker() {
   const [showSleepTimePicker, setShowSleepTimePicker] = useState(false);
   const [showWakeTimePicker, setShowWakeTimePicker] = useState(false);
 
-  // Load entries from storage when the component mounts
   useEffect(() => {
     const loadEntries = async () => {
       try {
         const savedEntries = await getStorageItem("sleepEntries");
         if (savedEntries) {
-          setEntries(savedEntries);
+          setEntries(sortEntriesByDate(savedEntries));
         }
       } catch (error) {
         console.error("Failed to load entries:", error);
@@ -43,7 +41,6 @@ export default function SleepTracker() {
     loadEntries();
   }, []);
 
-  // Save entries to storage whenever the entries state changes
   useEffect(() => {
     const saveEntries = async () => {
       try {
@@ -56,7 +53,6 @@ export default function SleepTracker() {
     saveEntries();
   }, [entries]);
 
-  // Helper functions for storage (mobile and web)
   const setStorageItem = async (key, value) => {
     if (Platform.OS === "web") {
       localStorage.setItem(key, JSON.stringify(value));
@@ -78,9 +74,8 @@ export default function SleepTracker() {
   const calculateDuration = (start, end) => {
     let diff = end - start;
 
-    // If wakeTime is earlier than sleepTime, it means wakeTime is on the next day
     if (end < start) {
-      diff += 24 * 60 * 60 * 1000; // Add 24 hours in milliseconds
+      diff += 24 * 60 * 60 * 1000;
     }
 
     const hours = Math.floor(diff / 1000 / 60 / 60);
@@ -88,9 +83,13 @@ export default function SleepTracker() {
     return { hours, minutes };
   };
 
+  const sortEntriesByDate = (entries) => {
+    return entries.sort((a, b) => new Date(b.date) - new Date(a.date));
+  };
+
   const saveEntry = () => {
     const duration = calculateDuration(sleepTime, wakeTime);
-    const recommendedSleep = 8; // Recommended sleep duration in hours
+    const recommendedSleep = 8;
     const totalRecommendedMinutes = recommendedSleep * 60;
     const totalSleepMinutes = duration.hours * 60 + duration.minutes;
 
@@ -121,13 +120,13 @@ export default function SleepTracker() {
       isPerfectSleep,
     };
 
-    setEntries([...entries, newEntry]);
+    setEntries(sortEntriesByDate([...entries, newEntry]));
     setModalVisible(false);
   };
 
   const deleteEntry = (index) => {
     const updatedEntries = entries.filter((_, i) => i !== index);
-    setEntries(updatedEntries);
+    setEntries(sortEntriesByDate(updatedEntries));
   };
 
   const graphData = {
@@ -227,6 +226,7 @@ export default function SleepTracker() {
           />
         </View>
       )}
+      
 
       <TouchableOpacity style={styles.fab} onPress={() => setModalVisible(true)}>
         <MaterialCommunityIcons name="plus" size={30} color="white" />
@@ -242,7 +242,6 @@ export default function SleepTracker() {
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>SET DATE AND TIME</Text>
 
-            {/* Date Input */}
             <Text style={styles.label}>Date:</Text>
             {Platform.OS === "web" ? (
               <input
@@ -266,7 +265,6 @@ export default function SleepTracker() {
               </View>
             )}
 
-            {/* Sleep Time Input */}
             <Text style={styles.label}>Sleep Time:</Text>
             {Platform.OS === "web" ? (
               <input
@@ -290,7 +288,6 @@ export default function SleepTracker() {
               </View>
             )}
 
-            {/* Wake Time Input */}
             <Text style={styles.label}>Wake Time:</Text>
             {Platform.OS === "web" ? (
               <input
@@ -335,7 +332,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#f8f9fa",
+    backgroundColor: "#B9D9EB",
   },
   entriesContainer: {
     width: "100%",

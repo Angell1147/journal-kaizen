@@ -1,190 +1,133 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, TextInput, Modal, ImageBackground } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { MaterialCommunityIcons } from '@expo/vector-icons'; // Use any icon library you prefer
-import { Calendar } from 'react-native-calendars'; // Import Calendar component
-import bgcolor from "@/assets/images/bg2.png"
-import { useFocusEffect } from '@react-navigation/native';
-export default function HighlightsScreen() {
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Calendar } from 'react-native-calendars';
+import { useFocusEffect, useNavigation } from 'expo-router';
+import bgcolor from "@/assets/images/bg2.png";
+import { format, parseISO, isValid } from 'date-fns';
 
-            
+export default function HighlightsScreen() {
+  const navigation = useNavigation();
   const [highlights, setHighlights] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [newHighlight, setNewHighlight] = useState('');
-  const [isCalendarVisible, setIsCalendarVisible] = useState(false); // Show calendar on button click  
+  const [isCalendarVisible, setIsCalendarVisible] = useState(false);
   const [markedDates, setMarkedDates] = useState({});
 
-  const getTodayDate = () => {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = (today.getMonth() + 1).toString().padStart(2, '0');
-    const day = today.getDate().toString().padStart(2, '0');
-    return `${year}-${month}-${day}`; // YYYY-MM-DD
-  };
-  
+  const getTodayDate = () => format(new Date(), 'yyyy-MM-dd');
 
-  // Fetch highlights from AsyncStorage on component mount
-  useEffect(() => {
-    const fetchHighlights = async () => {
-      const result = await AsyncStorage.getItem('highlights');
-      if (result) {
+  const fetchHighlights = async () => {
+    const result = await AsyncStorage.getItem('highlights');
+    if (result) {
+      try {
         const parsedHighlights = JSON.parse(result);
-        setHighlights(parsedHighlights);  // Use the original dates without overriding
-        markDatesOnCalendar(parsedHighlights);
+        const validHighlights = parsedHighlights.filter(item => isValid(new Date(item.date)));
+        setHighlights(validHighlights);
+        markDatesOnCalendar(validHighlights);
+      } catch (error) {
+        console.error("Error parsing highlights:", error);
       }
-    };
-    
-    fetchHighlights();
-  }, []);
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchHighlights();
+    }, [])
+  );
 
   const markDatesOnCalendar = (highlights) => {
     const newMarkedDates = {};
     highlights.forEach((highlight) => {
-      newMarkedDates[highlight.date] = {
-        marked: true,
-        customStyles: {
-          container: {
-            backgroundColor: 'transparent',
+      if (isValid(new Date(highlight.date))) {
+        newMarkedDates[highlight.date] = {
+          marked: true,
+          customStyles: {
+            container: { backgroundColor: 'transparent' },
+            text: { color: 'green', fontWeight: 'bold' },
           },
-          text: {
-            color: 'green',
-            fontWeight: 'bold',
-          },
-        },
-      };
+        };
+      }
     });
     setMarkedDates(newMarkedDates);
   };
-  
-  
 
-  // Save a new highlight
   const saveHighlight = async () => {
-    if (!newHighlight) {
-      alert('Please enter a highlight.');
-      return;
-    }
-  
-    const newItem = {
-      date: getTodayDate(), // Use new date format
-      text: newHighlight,
-    };
-  
+    if (!newHighlight.trim()) return alert('Please enter a highlight.');
+
+    const newItem = { date: getTodayDate(), text: newHighlight.trim() };
     const updatedHighlights = [...highlights, newItem];
     setHighlights(updatedHighlights);
     await AsyncStorage.setItem('highlights', JSON.stringify(updatedHighlights));
     setIsModalVisible(false);
     setNewHighlight('');
-    markDatesOnCalendar(updatedHighlights); // Mark the new date
+    markDatesOnCalendar(updatedHighlights);
   };
-  
 
-  // Delete a highlight
   const deleteHighlight = async (index) => {
     const updatedHighlights = highlights.filter((_, i) => i !== index);
     setHighlights(updatedHighlights);
-
-    // Save the updated highlights to AsyncStorage
     await AsyncStorage.setItem('highlights', JSON.stringify(updatedHighlights));
+    markDatesOnCalendar(updatedHighlights);
   };
 
-  // Render each highlight item
-  // Helper function to format the date
-const formatDateToMonthDay = (dateString) => {
-  const date = new Date(dateString); // Parse the date
-  if (isNaN(date)) {
-    console.warn(`Invalid date format: ${dateString}`);
-    return dateString; // Return original string if date is invalid
-  }
-  const options = { month: 'short', day: 'numeric' }; // Jan 6
-  return date.toLocaleDateString('en-US', options); // Locale may vary
-};
+  const formatDateToMonthDay = (dateString) => {
+    try {
+      return format(new Date(dateString), 'MMM d'); // Example: "Jan 9"
+    } catch {
+      return 'Invalid Date';
+    }
+  };
 
-// Render each highlight item
-const renderItem = ({ item, index }) => {
-  const colors = ['#FEE4C4', '#E6D4FF', '#FFEDC5', '#D2EFFF', '#FFE4E6', '#DFFFD4', '#F4DFF5', '#C9FFF7', '#FFF4CC', '#E3DFFB'];
-  const tabColor = colors[index % colors.length]; // Cycle through colors based on index
+  const renderItem = ({ item, index }) => {
+    const colors = ['#FEE4C4', '#E6D4FF', '#FFEDC5', '#D2EFFF', '#FFE4E6', '#DFFFD4', '#F4DFF5', '#C9FFF7', '#FFF4CC', '#E3DFFB'];
+    const tabColor = colors[index % colors.length];
+    const [month, day] = formatDateToMonthDay(item.date).split(' ');
 
-  const formattedDate = formatDateToMonthDay(item.date); // Format the date
-
-  const [month, day] = formattedDate.split(' '); // Split the formatted date
-
-  return (
-    <View style={[styles.highlightBox, { backgroundColor: tabColor }]}>
-      <View style={styles.dateBox}>
-        <Text style={styles.month}>{month}</Text>
-        <Text style={styles.day}>{day}</Text>
+    return (
+      <View style={[styles.highlightBox, { backgroundColor: tabColor }]}>
+        <View style={styles.dateBox}>
+          <Text style={styles.month}>{month}</Text>
+          <Text style={styles.day}>{day}</Text>
+        </View>
+        <Text style={styles.highlightText}>{item.text}</Text>
+        <TouchableOpacity onPress={() => deleteHighlight(index)} style={styles.deleteButton}>
+          <MaterialCommunityIcons name="trash-can-outline" size={24} color="#5072A7" />
+        </TouchableOpacity>
       </View>
-      <Text style={styles.highlightText}>{item.text}</Text>
-      <TouchableOpacity onPress={() => deleteHighlight(index)} style={styles.deleteButton}>
-        <MaterialCommunityIcons name="trash-can-outline" size={24} color="#5072A7" />
-      </TouchableOpacity>
-    </View>
-  );
-};
-
+    );
+  };
 
   return (
-    <ImageBackground 
-      source={bgcolor} 
-      resizeMode="cover" 
-      style={styles.bg}>
-    
+    <ImageBackground source={bgcolor} resizeMode="cover" style={styles.bg}>
       <View style={styles.container}>
         <Text style={styles.header}>THE DAY THAT WAS</Text>
 
-        {/* Displaying the calendar */}
         {isCalendarVisible && (
           <View style={styles.calendarContainer}>
             <Calendar
-            markedDates={markedDates} // Marked dates with tick
-            markingType={'custom'}
-            onDayPress={(day) => {
-              console.log('Selected day:', day.dateString);
-            }}
-
-
-              renderDay={(day, selectedDate, inRange) => {
-                  const isMarked = markedDates[day.dateString];
-                  console.log('Day:', day.dateString, 'IsMarked:', isMarked);
-                  return (
-                    <View style={{ alignItems: 'center' }}>
-                      {/* Render the date */}
-                      <Text style={styles.calendarDate}>{day.day}</Text>
-                
-                      {/* Show green tick if date is marked */}
-                      {isMarked && (
-                        <MaterialCommunityIcons
-                          name="check-circle"
-                          size={20}
-                          color="green"
-                          style={{ marginTop: 5 }} // Adjust for spacing if needed
-                        />
-                      )}
-                    </View>
-                  );
-                }}
-                
+              markedDates={markedDates}
+              markingType={'custom'}
+              onDayPress={(day) => console.log('Selected day:', day.dateString)}
             />
           </View>
         )}
 
         <FlatList
           data={highlights}
-          keyExtractor={(item, index) => index.toString()} // Add keyExtractor
+          keyExtractor={(_, index) => index.toString()}
           renderItem={renderItem}
-          contentContainerStyle={styles.listContent} // Add padding to the list
+          contentContainerStyle={styles.listContent}
         />
 
-        {/* Floating Calendar Button */}
         <TouchableOpacity
           style={styles.floatingCalendarButton}
-          onPress={() => setIsCalendarVisible(!isCalendarVisible)} // Toggle calendar visibility
+          onPress={() => setIsCalendarVisible(!isCalendarVisible)}
         >
           <MaterialCommunityIcons name="calendar" size={30} color="white" />
         </TouchableOpacity>
 
-        {/* Floating Write Button */}
         <TouchableOpacity
           style={styles.floatingButton}
           onPress={() => setIsModalVisible(true)}
@@ -192,7 +135,6 @@ const renderItem = ({ item, index }) => {
           <MaterialCommunityIcons name="pencil" size={30} color="white" />
         </TouchableOpacity>
 
-        {/* Modal for Writing a Highlight */}
         <Modal
           visible={isModalVisible}
           animationType="slide"
@@ -238,14 +180,14 @@ const styles = StyleSheet.create({
     color: '#5C5C5C',
     textAlign: 'center',
   },
-  bg : {
-    height : '100%',
-    width : 'auto',
-    resizeMode : 'cover',
-    justifyContent : 'center',
-},
+  bg: {
+    height: '100%',
+    width: 'auto',
+    resizeMode: 'cover',
+    justifyContent: 'center',
+  },
   listContent: {
-    paddingBottom: 80, // Add padding to avoid overlap with the FAB
+    paddingBottom: 80,
   },
   highlightBox: {
     flexDirection: 'row',
@@ -281,7 +223,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     color: '#3D3D3D',
-    marginTop: 2, // Space the day below the month
+    marginTop: 2,
   },
   highlightText: {
     flex: 1,
@@ -295,46 +237,37 @@ const styles = StyleSheet.create({
   },
   floatingButton: {
     position: 'absolute',
-    bottom: 5, // Increased space between the calendar icon and pencil icon
+    bottom: 5,
     right: 20,
     backgroundColor: '#008E97',
     borderRadius: 50,
     padding: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
     elevation: 5,
   },
   floatingCalendarButton: {
     position: 'absolute',
-    bottom: 70, // Adjusted for spacing between icons
+    bottom: 70,
     right: 20,
     backgroundColor: '#008E97',
     borderRadius: 50,
+    padding: 10,
+    elevation: 5,
+  },
+  calendarContainer: {
+    position: 'absolute',
+    zIndex: 10,
+    elevation: 10,
+    top: 50,
+    left: 10,
+    right: 10,
+    backgroundColor: '#FFF',
+    borderRadius: 10,
     padding: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 5,
   },
-  calendarContainer: {
-    position: 'absolute', // Allow it to float over the list
-    zIndex: 10,           // Make sure it stays on top
-    elevation: 10,        // For Android compatibility
-    top: 50,              // Adjust to your preferred vertical position
-    left: 10,             // Adjust for horizontal positioning
-    right: 10,            // Optional for full-width calendar
-    backgroundColor: '#FFF',
-    borderRadius: 10,
-    padding: 10,          // Space inside the calendar container
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  
   modalBackground: {
     flex: 1,
     justifyContent: 'center',
@@ -353,13 +286,13 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   textInput: {
-    height: 100, // Increased height for multiline input
+    height: 100,
     borderColor: '#ccc',
     borderWidth: 1,
     borderRadius: 5,
     marginBottom: 20,
     paddingLeft: 10,
-    textAlignVertical: 'top', // Align text to the top
+    textAlignVertical: 'top',
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -375,12 +308,4 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
   },
-  calendarDate: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#000',
-    marginBottom: 5, // Space between date and tick
-  },
 });
-
-
