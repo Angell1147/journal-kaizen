@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, Button, Modal, TouchableOpacity, ScrollView } from "react-native";
 import { Calendar } from "react-native-calendars";
 import { PieChart } from "react-native-chart-kit";
 import { Dimensions } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";  // Import AsyncStorage
+
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -21,13 +23,41 @@ const App = () => {
     { label: "Excited", color: "purple", key: "excited" },
   ];
 
+
+  // Load moods from AsyncStorage
+  useEffect(() => {
+    const loadMoods = async () => {
+      try {
+        const storedMoods = await AsyncStorage.getItem("moods");
+        if (storedMoods) {
+          setMoods(JSON.parse(storedMoods));
+        }
+      } catch (error) {
+        console.error("Failed to load moods from AsyncStorage", error);
+      }
+    };
+
+    loadMoods();
+  }, []);
+
+  // Save moods to AsyncStorage
+  const saveMoodsToStorage = async (newMoods) => {
+    try {
+      await AsyncStorage.setItem("moods", JSON.stringify(newMoods));
+    } catch (error) {
+      console.error("Failed to save moods to AsyncStorage", error);
+    }
+  };
+
   // Handle mood selection
   const handleMoodSelection = (moodKey) => {
     if (selectedDay) {
-      setMoods((prev) => ({
-        ...prev,
+      const newMoods = {
+        ...moods,
         [selectedDay]: moodKey,
-      }));
+      };
+      setMoods(newMoods);
+      saveMoodsToStorage(newMoods);
       setModalVisible(false);
     }
   };
