@@ -77,6 +77,7 @@ export default function WheelOfHabits() {
       const allCompleted = habitDays.every((day) => day);
       if (allCompleted) {
         setShowConfetti(true);
+        habitDays.fill(false);
       }
 
       return { ...prevState, [habitId]: habitDays };
@@ -153,30 +154,33 @@ export default function WheelOfHabits() {
       )}
 
       <View style={styles.habitListContainer}>
-        <FlatList
-          data={habits}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <View style={styles.habitRow}>
-              <Text style={[styles.habit, { color: item.color }]}>{item.name}</Text>
-              <TouchableOpacity onPress={() => deleteHabit(item.id)} style={styles.deleteButton}>
-                <Icon name="delete" size={24} color="#008E97" />
-              </TouchableOpacity>
-            </View>
-          )}
-        />
-      </View>
+        <View style={styles.listSection}>
+          <Text style={styles.listTitle}>List it down here:</Text>
+          <FlatList
+            data={habits}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <View style={styles.habitRow}>
+                <Text style={[styles.habit, { color: item.color }]}>{item.name}</Text>
+                <TouchableOpacity onPress={() => deleteHabit(item.id)} style={styles.deleteButton}>
+                  <Icon name="delete" size={18} color="#008E97" />
+                </TouchableOpacity>
+              </View>
+            )}
+          />
+        </View>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Add a new habit"
-        placeholderTextColor="#888"
-        value={newHabit}
-        onChangeText={setNewHabit}
-      />
-      <TouchableOpacity style={styles.button} onPress={addHabit}>
-        <Text style={styles.buttonText}>Add Habit</Text>
-      </TouchableOpacity>
+        <TextInput
+          style={styles.input}
+          placeholder="Add a new habit"
+          placeholderTextColor="#888"
+          value={newHabit}
+          onChangeText={setNewHabit}
+        />
+        <TouchableOpacity style={styles.button} onPress={addHabit}>
+          <Text style={styles.buttonText}>Add Habit</Text>
+        </TouchableOpacity>
+      </View>  
     </ScrollView>
   );
 }
@@ -211,15 +215,32 @@ const styles = StyleSheet.create({
   habitListContainer: {
     width: '100%',
     padding: 15,
+    alignItems: 'center',
+    padding: 15,
+    borderWidth: 3,
+    borderColor: '#ddd',
+    marginTop: 20, 
+    marginBottom: 0,
+    borderRadius: 10,
+  }, 
+    listSection: {
+        width: '100%',
+    },
+  listTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#333',
+    marginTop: 0,
+    textAlign: 'left',
   },
   habitRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingVertical: 5,
+    marginTop : 5,
+    paddingVertical: 1,
   },
   habit: {
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 18,
   },
   input: {
     borderWidth: 1,
@@ -240,6 +261,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   deleteButton: {
-    padding: 5,
+    padding: 3,
   },
 });

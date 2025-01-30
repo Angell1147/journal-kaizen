@@ -84,7 +84,7 @@ export default function SleepTracker() {
   };
 
   const sortEntriesByDate = (entries) => {
-    return entries.sort((a, b) => new Date(b.date) - new Date(a.date));
+    return entries.sort((a, b) => new Date(a.date) - new Date(b.date));
   };
 
   const saveEntry = () => {
@@ -105,7 +105,7 @@ export default function SleepTracker() {
     const isPerfectSleep = totalSleepMinutes === totalRecommendedMinutes;
 
     const newEntry = {
-      date: format(date, "yyyy-MM-dd"),
+      date: format(date, "dd-MM-yyyy"),
       sleepTime: format(sleepTime, "hh:mm a"),
       wakeTime: format(wakeTime, "hh:mm a"),
       duration,
@@ -246,13 +246,13 @@ export default function SleepTracker() {
             {Platform.OS === "web" ? (
               <input
                 type="date"
-                value={format(date, "yyyy-MM-dd")}
+                value={format(date, "dd-MM-yyyy")}
                 onChange={handleDateChange}
               />
             ) : (
               <View style={styles.inputBox}>
                 <TouchableOpacity onPress={() => setShowDatePicker(true)}>
-                  <Text style={styles.dateText}>{format(date, "yyyy-MM-dd")}</Text>
+                  <Text style={styles.dateText}>{format(date, "dd-MM-yyyy")}</Text>
                 </TouchableOpacity>
                 {showDatePicker && (
                   <DateTimePicker
