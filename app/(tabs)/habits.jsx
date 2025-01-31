@@ -4,6 +4,7 @@ import { Svg, G, Path } from 'react-native-svg';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ConfettiCannon from 'react-native-confetti-cannon';
+import { Pressable } from 'react-native';
 
 export default function WheelOfHabits() {
   const [habits, setHabits] = useState([]);
@@ -11,8 +12,8 @@ export default function WheelOfHabits() {
   const [completedDays, setCompletedDays] = useState({});
   const [showConfetti, setShowConfetti] = useState(false);
   const totalDays = 21;
-  const radiusIncrement = 25;
-  const baseOuterRadius = 65;
+  const radiusIncrement = 24;
+  const baseOuterRadius = 55;
   const ringThickness = 20;
   const sectorAngle = 270;
 
@@ -117,14 +118,21 @@ export default function WheelOfHabits() {
             const isCompleted = completedDays[habit.id]?.[dayIndex];
 
             return (
-              <Path
-                key={dayIndex}
-                d={pathData}
-                fill={isCompleted ? habitColor : 'lightgray'}
-                stroke="black"
-                strokeWidth={0.5}
+              <G 
+              key={dayIndex}
                 onPress={() => toggleDayCompletion(habit.id, dayIndex)}
-              />
+                onStartShouldSetResponder={() => true}
+                onResponderGrant={() => toggleDayCompletion(habit.id, dayIndex)}
+              >
+                <Path
+                  // key={dayIndex}
+                  d={pathData}
+                  fill={isCompleted ? habitColor : 'lightgray'}
+                  stroke="black"
+                  strokeWidth={0.5}
+                  // onPress={() => toggleDayCompletion(habit.id, dayIndex)}
+                />
+              </G>
             );
           })}
         </G>
