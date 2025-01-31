@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "909732087712",
+    "firebase_url": "https://journal-kaizen-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "journal-kaizen",
+    "storage_bucket": "journal-kaizen.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:909732087712:android:0f675088f536b6591386c5",
+        "android_client_info": {
+          "package_name": "com.angell1147.kaizen"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "909732087712-b6bkhvaob6rri35ame6k244oehj6rfs9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDD9JUCFZ1RKjCIKdQBZA49z2L2K9V_qNE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "909732087712-b6bkhvaob6rri35ame6k244oehj6rfs9.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "909732087712-h8qtmc9ulrgs2rtimhaeo9opsmnpfbko.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.angell1147.kaizen"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

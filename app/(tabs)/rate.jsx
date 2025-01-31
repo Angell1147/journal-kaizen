@@ -16,11 +16,11 @@ const App = () => {
 
   // Mood categories
   const moodOptions = [
-    { label: "Happy", color: "green", key: "happy" },
-    { label: "Sad", color: "blue", key: "sad" },
-    { label: "Angry", color: "red", key: "angry" },
-    { label: "Neutral", color: "yellow", key: "neutral" },
-    { label: "Excited", color: "purple", key: "excited" },
+    { label: "Happy", color: '#4ECDC4', key: "happy" },
+    { label: "Sad", color: '#A8E6CF', key: "sad" },
+    { label: "Angry", color: '#D4A5A5', key: "angry" },
+    { label: "Neutral", color: '#F5F5DC', key: "neutral" },
+    { label: "Excited", color: '#9EC1CF', key: "excited" },
   ];
 
 
@@ -81,6 +81,8 @@ const App = () => {
       color: mood.color,
       legendFontColor: "#7F7F7F",
       legendFontSize: 15,
+      borderWidth : 3,
+      borderColor: "#000"
     }));
 
   return (
@@ -110,19 +112,36 @@ const App = () => {
         Mood Distribution for {currentMonth}
       </Text>
       {pieData.length > 0 ? (
-        <PieChart
-          data={pieData}
-          width={screenWidth - 40}
-          height={220}
-          chartConfig={{
-            color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-            labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-          }}
-          accessor="population"
-          backgroundColor="transparent"
-          paddingLeft="15"
-          absolute
-        />
+        <View
+        style={{
+          alignItems: "center",
+          borderWidth: 3,
+          borderColor: "#ddd",  // Light grey border around the pie chart
+          borderRadius: 10,
+          padding: 10,
+          marginBottom: 20,
+          backgroundColor: "#f9f9f9",  // Soft background color for the container
+        }}
+      >
+          <PieChart
+            data={pieData}
+            width={screenWidth - 40}
+            height={220}
+            chartConfig={{
+              color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+              labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+              propsForDots: {
+                r: "6",  // Circle size for each segment
+                strokeWidth: "2",  // Border thickness for each segment
+                stroke: "#fff",  // White border around each segment
+              },
+            }}
+            accessor="population"
+            backgroundColor="transparent"
+            paddingLeft="15"
+            absolute
+          />
+        </View>
       ) : (
         <Text style={{ textAlign: "center" }}>No moods selected yet for this month.</Text>
       )}

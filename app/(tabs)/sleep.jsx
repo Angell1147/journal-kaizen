@@ -84,7 +84,7 @@ export default function SleepTracker() {
   };
 
   const sortEntriesByDate = (entries) => {
-    return entries.sort((a, b) => new Date(a.date) - new Date(b.date));
+    return entries.sort((a, b) => new Date(b.date) - new Date(a.date));
   };
 
   const saveEntry = () => {
