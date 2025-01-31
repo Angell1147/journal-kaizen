@@ -57,7 +57,7 @@ export default function SymptomTracker() {
       <Text style={styles.title}>Track the clues your body gives</Text>
 
       <View style={styles.inputGroup}>
-        <Text style={styles.label}>Describe your symptoms</Text>
+        <Text style={styles.label}></Text>
         <TextInput
           style={styles.textArea}
           placeholder="Describe all symptoms here"
@@ -68,7 +68,7 @@ export default function SymptomTracker() {
         />
       </View>
 
-      <Button title="Get Diagnosis" onPress={fetchDiagnosis} color="#007BFF" />
+      <Button title="Get Diagnosis" onPress={fetchDiagnosis} color="black" />
 
       {diagnosis && (
         <View style={styles.diagnosisSection}>
