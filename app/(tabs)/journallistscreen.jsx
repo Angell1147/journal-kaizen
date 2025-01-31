@@ -2,22 +2,25 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback } from 'react';
 
 export default function JournalsListScreen() {
   const [savedJournals, setSavedJournals] = useState([]);
 
-  useEffect(() => {
-    const fetchJournals = async () => {
-      try {
-        const existingJournals = await AsyncStorage.getItem('journals');
-        const journals = existingJournals ? JSON.parse(existingJournals) : [];
-        setSavedJournals(journals);
-      } catch (e) {
-        console.error('Error fetching journals: ', e);
-      }
-    };
-    fetchJournals();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      const fetchJournals = async () => {
+        try {
+          const existingJournals = await AsyncStorage.getItem('journals');
+          setSavedJournals(existingJournals ? JSON.parse(existingJournals) : []);
+        } catch (e) {
+          console.error('Error fetching journals: ', e);
+        }
+      };
+      fetchJournals();
+    }, [])
+  );
 
   useEffect(() => {
     const saveToStorage = async () => {
@@ -34,9 +37,11 @@ export default function JournalsListScreen() {
   const deleteJournal = (index) => {
     setSavedJournals((prevJournals) => {
       const updatedJournals = prevJournals.filter((_, i) => i !== index);
-      return [...updatedJournals]; // Ensure new array is returned
+      AsyncStorage.setItem('journals', JSON.stringify(updatedJournals)); // Save immediately
+      return updatedJournals;
     });
   };
+  
 
   const toggleText = (index) => {
     setSavedJournals((prevJournals) => {
@@ -52,8 +57,13 @@ export default function JournalsListScreen() {
   };
 
   const addNewJournal = (newJournal) => {
-    setSavedJournals((prevJournals) => [...prevJournals, newJournal]);
+    setSavedJournals((prevJournals) => {
+      const updatedJournals = [...prevJournals, newJournal];
+      AsyncStorage.setItem('journals', JSON.stringify(updatedJournals)); // Save immediately
+      return updatedJournals;
+    });
   };
+  
 
   return (
     <View style={styles.container}>
@@ -86,14 +96,17 @@ export default function JournalsListScreen() {
       </ScrollView>
 
       <TouchableOpacity
-        style={styles.fab}
-        onPress={() => {
-          const { router } = require('expo-router');
-          router.push('/journal');
-        }}
-      >
-        <Icon name="add" size={30} color="#FFF" />
-      </TouchableOpacity>
+  style={styles.fab}
+  onPress={() => {
+    router.push({
+      pathname: '/journal',
+      params: { onSave: addNewJournal }, // Pass the function
+    });
+  }}
+>
+  <Icon name="add" size={30} color="#FFF" />
+</TouchableOpacity>
+
     </View>
   );
 }
