@@ -1,4 +1,4 @@
-import { Image, Text, View, StyleSheet, Platform, Pressable, ImageBackground } from 'react-native';
+import { Image, Text, View, StyleSheet, Platform, Pressable, ImageBackground,Dimensions,ScrollView  } from 'react-native';
 import {Link} from 'expo-router'
 import React from 'react';
 import { HelloWave } from '@/components/HelloWave';
@@ -8,18 +8,22 @@ import { ThemedView } from '@/components/ThemedView';
 import bg from '@/assets/images/bg_color.png'
 import growthImage from '@/assets/images/brain-ladder.png' 
 
+const { width } = Dimensions.get('window'); 
+
 export default function HomeScreen() {
   return (
     <ImageBackground
           source={bg}
           resizeMode='cover'
           style={styles.bg}>
-      <ImageBackground
-        source={growthImage}
-        resizeMode='contain'
-        style={styles.empty}
-        imageStyle={styles.emptyImage}>
-      </ImageBackground>
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+      <View style={styles.empty}>
+        <Image
+          source={growthImage}
+          style={styles.growthImage}
+          resizeMode="contain"
+        />
+      </View>
       <ThemedView style={styles.container}>
         <Link href='/journallistscreen' style={{marginHorizontal: 'auto'}} asChild>
           <Pressable style={styles.button}>
@@ -57,6 +61,7 @@ export default function HomeScreen() {
           </Pressable>
         </Link>
       </ThemedView>
+      </ScrollView>
     </ImageBackground>
   );
 }
@@ -70,17 +75,19 @@ const styles = StyleSheet.create({
     alignContent: 'center'
   },
   empty: {
-    width: '85%',
-    height: '40%',
+    width: '100%',
+    height: '80%',
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 20,
     marginLeft: 30,
     backgroundColor: 'rgba(71, 101, 127, 0.75)',
-    overflow: 'hidden',   
+    borderRadius: 10,
+    overflow: 'hidden',
   },
-  emptyImage: {
-    opacity: 0.9, 
+  growthImage: {
+    width: '100%',
+    height: '100%',
   },
   container: {
     flex: 1,
