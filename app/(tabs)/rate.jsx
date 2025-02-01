@@ -86,7 +86,7 @@ const App = () => {
     }));
 
   return (
-    <ScrollView style={{ flex: 1, padding: 20 }}>
+    <ScrollView style={{ flex: 1, padding: 20, backgroundColor: "#EAF4F4" }}>
       {/* Calendar */}
       <Calendar
         onDayPress={(day) => {

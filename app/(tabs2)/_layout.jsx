@@ -20,15 +20,15 @@ const CustomDrawerContent = (props) => {
     <DrawerContentScrollView {...props} contentContainerStyle={{ flex: 1, backgroundColor: '#B0D6DA' }}>
       
       {/* Header Image */}
-      <View style={{ alignItems: 'center', marginVertical: 20 }}>
+      <View style={{ alignItems: 'center', marginVertical: 10 }}>
         <Image
-          source={require('../../assets/images/flowers.jpeg')} // Ensure correct path
-          style={{ width: 250, height: 183, resizeMode: 'contain', backgroundColor: 'white' }}
+          source={require('../../assets/images/flowers-bg.png')} // Ensure correct path
+          style={{ width: 220, height: 183, resizeMode: 'contain', backgroundColor: '#B0D6DA' }}
         />
       </View>
 
       {/* Styled Drawer Items */}
-      <View style={{ paddingHorizontal: 20 }}>
+      <View style={{ paddingHorizontal: 10 }}>
         <DrawerItemList {...props} />
       </View>
     </DrawerContentScrollView>
@@ -41,7 +41,7 @@ export default function Layout() {
       screenOptions={{
         drawerStyle: { backgroundColor: '#B0D6DA', width: 270 },
         drawerLabelStyle: { fontSize: 18, fontFamily: 'CursiveFont', textAlign: 'center' },
-        drawerItemStyle: { backgroundColor: '#48AAAD', marginVertical: 10, borderRadius: 10 },
+        drawerItemStyle: { backgroundColor: '#48AAAD', marginVertical: 8, borderRadius: 10 },
         drawerActiveTintColor: 'white',
         drawerInactiveTintColor: 'black',
       }}

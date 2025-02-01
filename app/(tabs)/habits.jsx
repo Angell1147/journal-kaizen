@@ -120,10 +120,10 @@ export default function WheelOfHabits() {
             return (
               <G 
               key={dayIndex}
-                onPress={() => toggleDayCompletion(habit.id, dayIndex)}
-                onStartShouldSetResponder={() => true}
-                onResponderGrant={() => toggleDayCompletion(habit.id, dayIndex)}
-              >
+              onStartShouldSetResponder={() => true}  // Necessary for touch interaction
+              onResponderGrant={() => toggleDayCompletion(habit.id, dayIndex)}  // Handle touch
+              style={{ flex: 1 }}  // Ensures proper touchable area on the segment
+            >
                 <Path
                   // key={dayIndex}
                   d={pathData}

@@ -8,7 +8,7 @@ import { ThemedView } from '@/components/ThemedView';
 import bg from '@/assets/images/bg_color.png'
 import growthImage from '@/assets/images/brain-ladder.png' 
 
-const { width } = Dimensions.get('window'); 
+// const { width } = Dimensions.get('window'); 
 
 export default function HomeScreen() {
   return (
@@ -16,14 +16,21 @@ export default function HomeScreen() {
           source={bg}
           resizeMode='cover'
           style={styles.bg}>
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+
+        <ImageBackground
+        source={growthImage}
+        resizeMode='contain'
+        style={styles.empty}
+        imageStyle={styles.emptyImage}>
+      </ImageBackground>
+      {/* <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
       <View style={styles.empty}>
         <Image
           source={growthImage}
           style={styles.growthImage}
           resizeMode="contain"
         />
-      </View>
+      </View> */}
       <ThemedView style={styles.container}>
         <Link href='/journallistscreen' style={{marginHorizontal: 'auto'}} asChild>
           <Pressable style={styles.button}>
@@ -61,7 +68,7 @@ export default function HomeScreen() {
           </Pressable>
         </Link>
       </ThemedView>
-      </ScrollView>
+      {/* </ScrollView> */}
     </ImageBackground>
   );
 }
@@ -75,17 +82,20 @@ const styles = StyleSheet.create({
     alignContent: 'center'
   },
   empty: {
-    width: '100%',
-    height: '80%',
+    width: '85%',
+    height: '45%',
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 20,
     marginLeft: 30,
-    backgroundColor: 'rgba(71, 101, 127, 0.75)',
-    borderRadius: 10,
+    backgroundColor: 'rgba(0, 0, 0, 0.75)',
     overflow: 'hidden',
+    // borderRadius: 10,
+    // overflow: 'hidden',
   },
-  growthImage: {
+    emptyImage: {
+    opacity: 0.9, 
+  // growthImage: {
     width: '100%',
     height: '100%',
   },
@@ -103,7 +113,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(42,150,167,0.75)',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 6,
+    padding: 4,
   },
   buttonText: {
     fontSize: 20,

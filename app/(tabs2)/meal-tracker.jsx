@@ -6,7 +6,6 @@ import {
   Button,
   StyleSheet,
   ScrollView,
-  Picker,
   Alert,
   TouchableOpacity,
   Platform,
@@ -16,6 +15,7 @@ import { PieChart } from 'react-native-chart-kit';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
+import {Picker} from '@react-native-picker/picker';
 
 const API_KEY = 'InGychJ06GX4v2WCFKzC4UCrt0AhJVCuwFtNAPkp';
 
@@ -237,14 +237,15 @@ const MealTracker = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flexGrow: 1, padding: 20, backgroundColor: "#BCD4E6" },
+  container: { flexGrow: 1, padding: 20, backgroundColor: "#EAF4F4" },
   title: { fontSize: 24, fontWeight: 'bold', textAlign: 'center' },
-  input: { borderWidth: 1, borderColor: 'black', borderRadius: 8, padding: 10, marginVertical: 10, backgroundColor: "white" },
-  picker: { height: 45, marginVertical: 10 },
+  input: { borderWidth: 1, borderColor: 'black', borderRadius: 8, padding: 10, marginVertical: 5, backgroundColor: "white" },
+  picker: { height: 55, marginVertical: 5, marginTop: 10 },
   radioContainer: {
     flexDirection: 'row',
     justifyContent: 'space-evenly',
-    marginVertical: 10,
+    marginTop: 10,
+    marginVertical: 20,
   },
   resultContainer: { marginTop: 20, alignItems: 'center' },
   resultText: { fontSize: 18, marginVertical: 5 },
