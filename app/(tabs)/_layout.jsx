@@ -16,6 +16,7 @@ import Home from './index';         // Home Screen (index.jsx)
 import Habits from './habits';      // Habits Screen (habits.jsx)
 import Rate from './rate';          // Rate My Day Screen (rate.jsx)
 import Journal from './journallistscreen';    // Journal Screen (journal.jsx)
+import WriteJournal from './journal';// Write Journal Screen (journal.jsx)
 import Highlight from './highlight';// Highlight of the Day (highlight.jsx)
 import Sleep from './sleep';        // Sleep Tracker Screen (sleep.jsx)
 
@@ -28,7 +29,7 @@ const TabLayout = () => {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: true,
+        headerShown: false,
         tabBarButton: HapticTab,
         tabBarBackground: TabBarBackground,
         tabBarStyle: Platform.select({
@@ -64,6 +65,13 @@ const TabLayout = () => {
         name="journal"
         options={{
           title: 'Journal',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="star" color={color} />,
+        }}
+      />
+       <Tabs.Screen
+        name="WriteJournal"
+        options={{
+          title: 'WriteJournal',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="star" color={color} />,
         }}
       />
@@ -125,7 +133,16 @@ export default function Layout() {
         title: 'Journal',
       }}
     />
-    {/* Drawer Screen 5 - Highlight */}
+    {/* Drawer Screen 5 - WriteJournal */}
+    <DrawerNavigator.Screen
+      name="WriteJournal"
+      component={WriteJournal}
+      options={{
+        drawerLabel: 'Add a Entry',
+        title: 'Add a Entry',
+      }}
+    />
+    {/* Drawer Screen 6 - Highlight */}
     <DrawerNavigator.Screen
       name="Highlight"
       component={Highlight}
@@ -134,7 +151,7 @@ export default function Layout() {
         title: 'Highlight of the Day',
       }}
     />
-    {/* Drawer Screen 6 - Sleep */}
+    {/* Drawer Screen 7 - Sleep */}
     <DrawerNavigator.Screen
       name="Sleep"
       component={Sleep}
