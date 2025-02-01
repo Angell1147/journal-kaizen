@@ -1,8 +1,8 @@
 import React from 'react';
 import { Platform } from 'react-native';
-import {Drawer} from '@react-navigation/drawer';
-import {NavigationContainer} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
+// import {Drawer} from '@react-navigation/drawer';
+// import {NavigationContainer} from '@react-navigation/native';
+// import {createStackNavigator} from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { Tabs } from 'expo-router';
 import { HapticTab } from '@/components/HapticTab';
@@ -16,8 +16,10 @@ import Home from './index';         // Home Screen (index.jsx)
 import Habits from './habits';      // Habits Screen (habits.jsx)
 import Rate from './rate';          // Rate My Day Screen (rate.jsx)
 import Journal from './journallistscreen';    // Journal Screen (journal.jsx)
+import WriteJournal from './journal';    // Write Journal Screen (writejournal.jsx)
 import Highlight from './highlight';// Highlight of the Day (highlight.jsx)
 import Sleep from './sleep';        // Sleep Tracker Screen (sleep.jsx)
+import Health from '../(tabs2)/index'   // Landing page medical (index.jsx)
 
 const DrawerNavigator = createDrawerNavigator();
 
@@ -28,7 +30,7 @@ const TabLayout = () => {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: true,
+        headerShown: false,
         tabBarButton: HapticTab,
         tabBarBackground: TabBarBackground,
         tabBarStyle: Platform.select({
@@ -68,6 +70,13 @@ const TabLayout = () => {
         }}
       />
       <Tabs.Screen
+        name="WriteJournal"
+        options={{
+          title: 'WriteJournal',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="star" color={color} />,
+        }}
+      />
+      <Tabs.Screen
         name="highlight"
         options={{
           title: 'Highlight of the Day',
@@ -78,6 +87,13 @@ const TabLayout = () => {
         name="sleep"
         options={{
           title: 'Sleep Tracker',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="moon.fill" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="Health"
+        options={{
+          title: 'Health',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="moon.fill" color={color} />,
         }}
       />
@@ -125,7 +141,16 @@ export default function Layout() {
         title: 'Journal',
       }}
     />
-    {/* Drawer Screen 5 - Highlight */}
+    {/* Drawer Screen 5 - WriteJournal */}
+    <DrawerNavigator.Screen
+      name="WriteJournal"
+      component={WriteJournal}
+      options={{
+        drawerLabel: 'Add a Entry',
+        title: 'Add a Entry',
+      }}
+    />
+    {/* Drawer Screen 6 - Highlight */}
     <DrawerNavigator.Screen
       name="Highlight"
       component={Highlight}
@@ -134,13 +159,22 @@ export default function Layout() {
         title: 'Highlight of the Day',
       }}
     />
-    {/* Drawer Screen 6 - Sleep */}
+    {/* Drawer Screen 7 - Sleep */}
     <DrawerNavigator.Screen
       name="Sleep"
       component={Sleep}
       options={{
         drawerLabel: 'Sleep Tracker',
         title: 'Sleep Tracker',
+      }}
+    />
+    {/* Drawer Screen 8 - Sleep */}
+    <DrawerNavigator.Screen
+      name="Health"
+      component={Health}
+      options={{
+        drawerLabel: 'Health Tracker',
+        title: 'Health Tracker',
       }}
     />
   </DrawerNavigator.Navigator>
