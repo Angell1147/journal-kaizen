@@ -16,7 +16,11 @@ import Home from './index';         // Home Screen (index.jsx)
 import Habits from './habits';      // Habits Screen (habits.jsx)
 import Rate from './rate';          // Rate My Day Screen (rate.jsx)
 import Journal from './journallistscreen';    // Journal Screen (journal.jsx)
+<<<<<<< HEAD
 import WriteJournal from './journal';    // Write Journal Screen (writejournal.jsx)
+=======
+import WriteJournal from './journal';// Write Journal Screen (journal.jsx)
+>>>>>>> d0d3dad83bdcfd435bc6fa3d2470c70a17c82780
 import Highlight from './highlight';// Highlight of the Day (highlight.jsx)
 import Sleep from './sleep';        // Sleep Tracker Screen (sleep.jsx)
 import Health from '../(tabs2)/index'   // Landing page medical (index.jsx)
@@ -66,6 +70,13 @@ const TabLayout = () => {
         name="journal"
         options={{
           title: 'Journal',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="star" color={color} />,
+        }}
+      />
+       <Tabs.Screen
+        name="WriteJournal"
+        options={{
+          title: 'WriteJournal',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="star" color={color} />,
         }}
       />
