@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "myJournal",
-    "slug": "myJournal",
+    "name": "HealthTracker",
+    "slug": "HealthTracker",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -15,8 +15,7 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      },
-      "package": "com.angell1147.kaizen"
+      }
     },
     "web": {
       "bundler": "metro",
@@ -37,14 +36,6 @@
     ],
     "experiments": {
       "typedRoutes": true
-    },
-    "extra": {
-      "router": {
-        "origin": false
-      },
-      "eas": {
-        "projectId": "040dbd4a-0886-4756-b4e9-47ba13ca7ee2"
-      }
     }
   }
 }

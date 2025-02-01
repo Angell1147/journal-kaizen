@@ -71,7 +71,7 @@ export default function HighlightsScreen() {
     await AsyncStorage.setItem('highlights', JSON.stringify(updatedHighlights));
     markDatesOnCalendar(updatedHighlights);
   };
-
+  
   const formatDateToMonthDay = (dateString) => {
     try {
       return format(new Date(dateString), 'MMM d'); // Example: "Jan 9"

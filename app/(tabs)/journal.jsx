@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, TextInput, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { format } from 'date-fns';
 export default function JournalScreen({ navigation }) {
   const [highlight, setHighlight] = useState('');
   const [journal, setJournal] = useState('');
@@ -31,7 +31,7 @@ export default function JournalScreen({ navigation }) {
     try {
       const existingHighlights = await AsyncStorage.getItem('highlights');
       const highlights = existingHighlights ? JSON.parse(existingHighlights) : [];
-      const newHighlight = { date: new Date().toLocaleDateString(), text: highlight };
+      const newHighlight = { date: format(new Date(), 'yyyy-MM-dd'), text: highlight };
       highlights.push(newHighlight);
       await AsyncStorage.setItem('highlights', JSON.stringify(highlights));
       setHighlight(''); // Clear the input field after saving
