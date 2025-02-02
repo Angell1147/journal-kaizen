@@ -6,7 +6,7 @@ import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList } from '
 import Home from './index';
 import Water from './waterbreak';
 import Medicine from './Medicine';
-import ContactUs from './contact-us';
+
 import AboutUs from './about-us';
 import Journalling from '../(tabs)/index';
 import Meal from './meal-tracker';
@@ -54,7 +54,6 @@ export default function Layout() {
       <DrawerNavigator.Screen name="Medicine" component={Medicine} options={{ drawerLabel: 'Medicine Info' }} />
       
      
-      <DrawerNavigator.Screen name="Contact Us" component={ContactUs} options={{ drawerLabel: 'Contact Us' }} />
       <DrawerNavigator.Screen name="About Us" component={AboutUs} options={{ drawerLabel: 'About Us' }} />
       <DrawerNavigator.Screen name="Journalling" component={Journalling} options={{ drawerLabel: 'Journal Section' }} />
     </DrawerNavigator.Navigator>

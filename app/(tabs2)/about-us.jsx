@@ -23,6 +23,7 @@ export default function AboutUs() {
       </Text>
       <Text style={styles.footer}>
         Thank you for choosing us to be a part of your health journey!
+        CONTACT US :1100224499||XYZ@gmail.com
       </Text>
     </ScrollView>
   );
