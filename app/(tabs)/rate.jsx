@@ -3,8 +3,7 @@ import { View, Text, Button, Modal, TouchableOpacity, ScrollView } from "react-n
 import { Calendar } from "react-native-calendars";
 import { PieChart } from "react-native-chart-kit";
 import { Dimensions } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";  // Import AsyncStorage
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -12,9 +11,8 @@ const App = () => {
   const [moods, setMoods] = useState({});
   const [selectedDay, setSelectedDay] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
-  const [currentMonth, setCurrentMonth] = useState(new Date().toISOString().slice(0, 7)); // Format: YYYY-MM
+  const [currentMonth, setCurrentMonth] = useState(new Date().toISOString().slice(0, 7));
 
-  // Mood categories
   const moodOptions = [
     { label: "Happy", color: '#4ECDC4', key: "happy" },
     { label: "Sad", color: '#A8E6CF', key: "sad" },
@@ -23,8 +21,6 @@ const App = () => {
     { label: "Excited", color: '#9EC1CF', key: "excited" },
   ];
 
-
-  // Load moods from AsyncStorage
   useEffect(() => {
     const loadMoods = async () => {
       try {
@@ -40,7 +36,6 @@ const App = () => {
     loadMoods();
   }, []);
 
-  // Save moods to AsyncStorage
   const saveMoodsToStorage = async (newMoods) => {
     try {
       await AsyncStorage.setItem("moods", JSON.stringify(newMoods));
@@ -49,7 +44,6 @@ const App = () => {
     }
   };
 
-  // Handle mood selection
   const handleMoodSelection = (moodKey) => {
     if (selectedDay) {
       const newMoods = {
@@ -62,39 +56,47 @@ const App = () => {
     }
   };
 
-  // Filter moods for the current month
+  // New function to handle mood deletion
+  const handleDeleteMood = () => {
+    if (selectedDay) {
+      const newMoods = { ...moods };
+      delete newMoods[selectedDay];
+      setMoods(newMoods);
+      saveMoodsToStorage(newMoods);
+      setModalVisible(false);
+    }
+  };
+
   const filteredMoods = Object.keys(moods).filter((date) =>
     date.startsWith(currentMonth)
   );
 
-  // Count moods for pie chart
   const moodCounts = moodOptions.map((mood) => ({
     ...mood,
     count: filteredMoods.filter((date) => moods[date] === mood.key).length,
   }));
 
   const pieData = moodCounts
-    .filter((mood) => mood.count > 0) // Exclude moods with 0 count
+    .filter((mood) => mood.count > 0)
     .map((mood) => ({
       name: mood.label,
       population: mood.count,
       color: mood.color,
       legendFontColor: "#7F7F7F",
       legendFontSize: 15,
-      borderWidth : 3,
+      borderWidth: 3,
       borderColor: "#000"
     }));
 
   return (
     <ScrollView style={{ flex: 1, padding: 20, backgroundColor: "#EAF4F4" }}>
-      {/* Calendar */}
       <Calendar
         onDayPress={(day) => {
           setSelectedDay(day.dateString);
-          setModalVisible(true); // Open mood selection modal
+          setModalVisible(true);
         }}
         onMonthChange={(month) => {
-          setCurrentMonth(month.dateString.slice(0, 7)); // Update current month (YYYY-MM)
+          setCurrentMonth(month.dateString.slice(0, 7));
         }}
         markedDates={Object.keys(moods).reduce((acc, date) => {
           if (date.startsWith(currentMonth)) {
@@ -107,22 +109,21 @@ const App = () => {
         }, {})}
       />
 
-      {/* Pie Chart */}
       <Text style={{ textAlign: "center", marginVertical: 20, fontSize: 18 }}>
         Mood Distribution for {currentMonth}
       </Text>
       {pieData.length > 0 ? (
         <View
-        style={{
-          alignItems: "center",
-          borderWidth: 3,
-          borderColor: "#ddd",  // Light grey border around the pie chart
-          borderRadius: 10,
-          padding: 10,
-          marginBottom: 20,
-          backgroundColor: "#f9f9f9",  // Soft background color for the container
-        }}
-      >
+          style={{
+            alignItems: "center",
+            borderWidth: 3,
+            borderColor: "#ddd",
+            borderRadius: 10,
+            padding: 10,
+            marginBottom: 20,
+            backgroundColor: "#f9f9f9",
+          }}
+        >
           <PieChart
             data={pieData}
             width={screenWidth - 40}
@@ -131,9 +132,9 @@ const App = () => {
               color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
               labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
               propsForDots: {
-                r: "6",  // Circle size for each segment
-                strokeWidth: "2",  // Border thickness for each segment
-                stroke: "#fff",  // White border around each segment
+                r: "6",
+                strokeWidth: "2",
+                stroke: "#fff",
               },
             }}
             accessor="population"
@@ -146,7 +147,6 @@ const App = () => {
         <Text style={{ textAlign: "center" }}>No moods selected yet for this month.</Text>
       )}
 
-      {/* Mood Selection Modal */}
       <Modal
         visible={modalVisible}
         transparent={true}
@@ -170,7 +170,9 @@ const App = () => {
             }}
           >
             <Text style={{ fontSize: 18, marginBottom: 10 }}>
-              Select Mood for {selectedDay}
+              {moods[selectedDay] 
+                ? `Current Mood for ${selectedDay}` 
+                : `Select Mood for ${selectedDay}`}
             </Text>
             {moodOptions.map((mood) => (
               <TouchableOpacity
@@ -194,11 +196,20 @@ const App = () => {
                 <Text style={{ fontSize: 16 }}>{mood.label}</Text>
               </TouchableOpacity>
             ))}
-            <Button
-              title="Cancel"
-              onPress={() => setModalVisible(false)}
-              color="red"
-            />
+            <View style={{ marginTop: 10, flexDirection: 'row', justifyContent: 'space-between' }}>
+              <Button
+                title="Cancel"
+                onPress={() => setModalVisible(false)}
+                color="gray"
+              />
+              {moods[selectedDay] && (
+                <Button
+                  title="Delete Mood"
+                  onPress={handleDeleteMood}
+                  color="red"
+                />
+              )}
+            </View>
           </View>
         </View>
       </Modal>
