@@ -1,56 +1,59 @@
 
 
 import React, { useState, useEffect } from "react";
-import GaugeChart from "react-gauge-chart";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
-import "./WaterBreakReminder.css";
+import { View, Text, TextInput, Button, FlatList, Alert, StyleSheet } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Circle } from "react-native-progress";
+import { MaterialIcons } from "@expo/vector-icons"; // For delete icon
+import ConfettiCannon from "react-native-confetti-cannon"; // For confetti effect
 
 const WaterBreakReminder = () => {
-  const [dailyTarget, setDailyTarget] = useState(() =>
-    parseFloat(localStorage.getItem("dailyTarget")) || 0
-  );
-  const [consumedWater, setConsumedWater] = useState(() =>
-    parseFloat(localStorage.getItem("consumedWater")) || 0
-  );
+  const [dailyTarget, setDailyTarget] = useState(0);
+  const [consumedWater, setConsumedWater] = useState(0);
   const [hourlyIntake, setHourlyIntake] = useState(0);
-  const [startDateTime, setStartDateTime] = useState(() =>
-    localStorage.getItem("startDateTime") || "2024-11-10T08:00"
-  );
-  const [endDateTime, setEndDateTime] = useState(() =>
-    localStorage.getItem("endDateTime") || "2024-11-10T20:00"
-  );
   const [waterDrunkThisHour, setWaterDrunkThisHour] = useState(0);
-  const [dailyDataHistory, setDailyDataHistory] = useState(() =>
-    JSON.parse(localStorage.getItem("dailyDataHistory")) || []
-  );
+  const [dailyDataHistory, setDailyDataHistory] = useState([]);
+  const [confetti, setConfetti] = useState(false); // To control confetti
 
   useEffect(() => {
-    calculateHourlyIntake(dailyTarget, startDateTime, endDateTime);
-  }, [dailyTarget, startDateTime, endDateTime]);
+    loadStoredData();
+  }, []);
 
   useEffect(() => {
-    localStorage.setItem("dailyTarget", dailyTarget);
-    localStorage.setItem("consumedWater", consumedWater);
-    localStorage.setItem("startDateTime", startDateTime);
-    localStorage.setItem("endDateTime", endDateTime);
-    localStorage.setItem("dailyDataHistory", JSON.stringify(dailyDataHistory));
-  }, [dailyTarget, consumedWater, startDateTime, endDateTime, dailyDataHistory]);
+    saveStoredData();
+    if (progress >= 1) {
+      setConfetti(true); // Trigger confetti when target is reached
+      setTimeout(() => setConfetti(false), 5000); // Stop confetti after 5 seconds
+    }
+  }, [dailyTarget, consumedWater, dailyDataHistory]);
 
-  const calculateHourlyIntake = (target, start, end) => {
-    const startDate = new Date(start);
-    const endDate = new Date(end);
-    const hoursInDay = (endDate - startDate) / (1000 * 60 * 60);
+  const loadStoredData = async () => {
+    try {
+      const storedTarget = await AsyncStorage.getItem("dailyTarget");
+      const storedConsumed = await AsyncStorage.getItem("consumedWater");
+      const storedHistory = await AsyncStorage.getItem("dailyDataHistory");
 
-   
+      if (storedTarget) setDailyTarget(parseFloat(storedTarget));
+      if (storedConsumed) setConsumedWater(parseFloat(storedConsumed));
+      if (storedHistory) setDailyDataHistory(JSON.parse(storedHistory));
+    } catch (error) {
+      console.error("Error loading data:", error);
+    }
+  };
 
-    const intakePerHour = (target * 1000) / hoursInDay;
-    setHourlyIntake(intakePerHour);
+  const saveStoredData = async () => {
+    try {
+      await AsyncStorage.setItem("dailyTarget", dailyTarget.toString());
+      await AsyncStorage.setItem("consumedWater", consumedWater.toString());
+      await AsyncStorage.setItem("dailyDataHistory", JSON.stringify(dailyDataHistory));
+    } catch (error) {
+      console.error("Error saving data:", error);
+    }
   };
 
   const submitDrinkAmount = () => {
     if (waterDrunkThisHour <= 0) {
-      alert("Please enter a valid water amount.");
+      Alert.alert("Invalid Input", "Please enter a valid water amount.");
       return;
     }
     setConsumedWater((prev) => prev + waterDrunkThisHour);
@@ -71,120 +74,129 @@ const WaterBreakReminder = () => {
     setConsumedWater(0);
     setWaterDrunkThisHour(0);
     setHourlyIntake(0);
-    setStartDateTime("2024-11-10T08:00");
-    setEndDateTime("2024-11-10T20:00");
   };
-
-  const progress = dailyTarget
-    ? Math.min(consumedWater / (dailyTarget * 1000), 1)
-    : 0;
 
   const deleteHistoryEntry = (index) => {
     const updatedHistory = dailyDataHistory.filter((_, i) => i !== index);
     setDailyDataHistory(updatedHistory);
   };
 
+  const progress = dailyTarget ? Math.min(consumedWater / (dailyTarget * 1000), 1) : 0;
+
+  const circleColor =
+    progress >= 1
+      ? "#4caf50" // Green when target is completed
+      : progress >= 0.5
+      ? "#ff9800" // Orange when more than 50%
+      : "#f44336"; // Red when less than 50%
+
   return (
-    <div className="water-break-reminder">
-      <h1>Water Break Reminder</h1>
-      <label>
-        Daily Target (liters):
-        <input
-          type="number"
-          value={dailyTarget}
-          onChange={(e) => setDailyTarget(Math.max(0, Number(e.target.value)))}
-          min="0.5"
-          step="0.1"
-        />
-      </label>
+    <View style={styles.container}>
+      {confetti && <ConfettiCannon count={200} origin={{ x: 0, y: 0 }} />}
+      <Text style={styles.title}>Water Break Reminder</Text>
 
-      <div className="time-inputs">
-        <label>
-          Start Date & Time:
-          <input
-            type="datetime-local"
-            value={startDateTime}
-            onChange={(e) => setStartDateTime(e.target.value)}
-          />
-        </label>
-        <label>
-          End Date & Time:
-          <input
-            type="datetime-local"
-            value={endDateTime}
-            onChange={(e) => setEndDateTime(e.target.value)}
-          />
-        </label>
-      </div>
+      <Text style={styles.label}>Daily Target (liters):</Text>
+      <TextInput
+        style={styles.input}
+        keyboardType="numeric"
+        value={dailyTarget.toString()}
+        onChangeText={(text) => setDailyTarget(Math.max(0, parseFloat(text) || 0))}
+      />
 
-      <div className="hourly-target">
-        <strong>Hourly Target: {hourlyIntake.toFixed(0)} ml</strong>
-      </div>
+      <Text style={styles.label}>Enter volume of water drunk this hour (ml):</Text>
+      <TextInput
+        style={styles.input}
+        keyboardType="numeric"
+        value={waterDrunkThisHour.toString()}
+        onChangeText={(text) => setWaterDrunkThisHour(Math.max(0, parseFloat(text) || 0))}
+      />
+      <Button title="Submit" onPress={submitDrinkAmount} />
 
-      <div className="gauge-container">
-        <GaugeChart
-          id="water-gauge"
-          nrOfLevels={20}
-          colors={["#ddd", "#00bcd4"]}
-          arcWidth={0.3}
-          percent={progress}
-          textColor="#333"
-        />
-      </div>
+      <View style={styles.gaugeContainer}>
+        <Text style={styles.progressText}>Water Intake Progress</Text>
+        <Circle progress={progress} strokeWidth={15} size={150} color={circleColor} />
+        <Text style={styles.progressPercentage}>{(progress * 100).toFixed(0)}%</Text>
+      </View>
 
-      <div className="drink-input">
-        <label>
-          Enter volume of water drunk this hour (ml):
-          <input
-            type="number"
-            value={waterDrunkThisHour}
-            onChange={(e) =>
-              setWaterDrunkThisHour(Math.max(0, Number(e.target.value)))
-            }
-            min="0"
-            step="50"
-          />
-        </label>
-        <button onClick={submitDrinkAmount}>Submit</button>
-      </div>
+      <Button title="Reset Target" onPress={handleReset} color="#d9534f" />
 
-      <div className="reset-container">
-        <button className="reset-button" onClick={handleReset}>
-          Reset Target
-        </button>
-      </div>
-
-      <div className="daily-history">
-        <h3>Daily Consumption History</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Target (Liters)</th>
-              <th>Consumed (Liters)</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {dailyDataHistory.map((data, index) => (
-              <tr key={index}>
-                <td>{data.date}</td>
-                <td>{data.target}</td>
-                <td>{data.consumed}</td>
-                <td>
-                  <FontAwesomeIcon
-                    icon={faTrash}
-                    className="delete-icon"
-                    onClick={() => deleteHistoryEntry(index)}
-                  />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
+      <Text style={styles.historyTitle}>Daily Consumption History</Text>
+      <FlatList
+        data={dailyDataHistory}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item, index }) => (
+          <View style={styles.historyRow}>
+            <Text style={styles.historyText}>{item.date}</Text>
+            <Text style={styles.historyText}>{item.target} L</Text>
+            <Text style={styles.historyText}>{item.consumed} L</Text>
+            <MaterialIcons name="delete" size={24} color="#d9534f" onPress={() => deleteHistoryEntry(index)} />
+          </View>
+        )}
+      />
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: "#bbdefb",
+  },
+  title: {
+    textAlign: "center",
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 20,
+    color: "#0e2237",
+  },
+  label: {
+    fontWeight: "bold",
+    marginBottom: 5,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: "#ddd",
+    padding: 10,
+    borderRadius: 5,
+    fontSize: 16,
+    marginBottom: 10,
+    backgroundColor: "#fff",
+  },
+  gaugeContainer: {
+    alignItems: "center",
+    marginVertical: 20,
+  },
+  progressText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  progressPercentage: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginTop: 5,
+  },
+  historyTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginTop: 20,
+    marginBottom: 10,
+    textAlign: "center",
+  },
+  historyRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    padding: 10,
+    backgroundColor: "#fff",
+    borderBottomWidth: 1,
+    borderColor: "#ddd",
+    alignItems: "center",
+  },
+  historyText: {
+    fontSize: 14,
+    fontWeight: "bold",
+  },
+});
 
 export default WaterBreakReminder;
