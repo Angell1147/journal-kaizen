@@ -12,7 +12,7 @@
       "supportsTablet": true
     },
     "android": {
-      "package" : "com.angell.kaizen",
+      "package": "com.angell.kaizen",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -37,6 +37,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "1f8a09d2-cbc4-42a0-94a9-6b68869da89e"
+      }
     }
   }
 }

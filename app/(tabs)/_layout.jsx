@@ -17,6 +17,8 @@ import WriteJournal from './journal';
 import Highlight from './highlight';
 import Sleep from './sleep';
 import Health from '../(tabs2)/index';
+import login from './login';
+import signup from './signup';
 
 const DrawerNavigator = createDrawerNavigator();
 
@@ -68,6 +70,8 @@ export default function Layout() {
       <DrawerNavigator.Screen name="Habits" component={Habits} options={{ drawerLabel: 'Wheel of Habits' }} />
       <DrawerNavigator.Screen name="Rate" component={Rate} options={{ drawerLabel: 'Rate My Day' }} />
       <DrawerNavigator.Screen name="Sleep" component={Sleep} options={{ drawerLabel: 'Sleep Tracker' }} />
+      <DrawerNavigator.Screen name="Login" component={login} options={{ drawerLabel: 'Log In' }} />
+      <DrawerNavigator.Screen name="Signup" component={signup} options={{ drawerLabel: 'Sign Up' }} />
       <DrawerNavigator.Screen name="Health" component={Health} options={{ drawerLabel: 'Health Tracker' }} />
     </DrawerNavigator.Navigator>
   );
