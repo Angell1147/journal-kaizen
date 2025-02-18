@@ -51,14 +51,19 @@ Ensure you have the following installed:
    
 2. **Install dependencies :**
    # Expo dependencies  
+   ```sh
    npm install expo-notifications react-native-screens react-native-safe-area-context react-native-gesture-handler react-native-reanimated react-native-vector-icons  
-   # API handling  
+   # API handling
+   ```sh
    npm install axios  
-   # Backend dependencies  
+   # Backend dependencies
+   ```sh  
    npm install express cors mongoose dotenv  
-   # Google Generative AI  
+   # Google Generative AI
+   ```sh
    npm install @google/generative-ai  
-   # Nodemon (for automatic server restart during development)  
+   # Nodemon (for automatic server restart during development)
+   ```sh
    npm install -g nodemon  
 
 3. **Start the backend server :**
