@@ -50,26 +50,26 @@ Ensure you have the following installed:
    cd kaizen
    
 2. **Install dependencies :**
-   # Expo dependencies  
    ```sh
-   npm install expo-notifications react-native-screens react-native-safe-area-context react-native-gesture-handler react-native-reanimated react-native-vector-icons  
-   # API handling
-   ```sh
-   npm install axios  
-   # Backend dependencies
-   ```sh  
-   npm install express cors mongoose dotenv  
-   # Google Generative AI
-   ```sh
-   npm install @google/generative-ai  
-   # Nodemon (for automatic server restart during development)
-   ```sh
+   // Expo dependencies  
+   npm install expo-notifications react-native-screens react-native-safe-area-context react-native-gesture-handler react-native-reanimated react-native-vector-icons
+   
+   // API handling
+   npm install axios
+   
+   // Backend dependencies
+   npm install express cors mongoose dotenv
+   
+   // Google Generative AI
+   npm install @google/generative-ai
+   
+   // Nodemon (for automatic server restart during development)
    npm install -g nodemon  
 
-3. **Start the backend server :**
+4. **Start the backend server :**
    ```sh
    cd backend
    nodemon server.js
-4. **Run the React Native app :**
+5. **Run the React Native app :**
    ```sh
    expo start
