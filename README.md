@@ -1,50 +1,70 @@
-# Welcome to your Expo app 👋
+# KAIZEN - Health & Wellness Tracking App  
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+## 📌 Overview  
+**KAIZEN** is a mobile application designed to help users track their health and wellness efficiently. Built using **React Native and Expo**, it integrates **Google Generative AI** and the **MERN stack** to provide intelligent insights and recommendations.  
 
-## Get started
+The app is divided into **two main sections**:  
+1. **Health Tracker** – Tracks meals, symptoms, medicines, and hydration.  
+2. **Journaling & Habit Building** – Includes mood tracking, journaling, sleep insights, and habit formation tools.  
 
-1. Install dependencies
+---
 
-   ```bash
-   npm install
-   ```
+## 🚀 Features  
 
-2. Start the app
+### 🏥 Health Tracker  
+- **Meal Tracker** – Uses an API to analyze user-inputted meals and calculate calories, proteins, and carbs.  
+- **Symptom Tracker** – Allows users to input symptoms and provides AI-based recommendations, including doctor visit suggestions for severe or persistent symptoms.  
+- **Medicine Lookup** – Enables users to search for medicines and view their uses, side effects, and other details.  
+- **Water Reminder** – Sends notifications to remind users to stay hydrated.  
 
-   ```bash
-    npx expo start
-   ```
+### 📖 Journaling & Habit Building  
+- **Daily Journaling** – Users can log their thoughts with an **icebreaker question (highlight of the day)** stored separately.  
+- **Mood & Sleep Tracking** – Provides **graphical insights** into sleep patterns and mood ratings over time.  
+- **AI-Powered Quotes** – Uses **Hugging Face API** to generate motivational quotes based on mood.  
+- **21-Day Habit Cycle** – A **habit-building wheel** that guides users through a 21-day process to establish new habits.  
 
-In the output, you'll find options to open the app in a
+---
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## 🛠️ Tech Stack  
+- **Frontend:** React Native, Expo  
+- **Backend:** MERN Stack (MongoDB, Express.js, React Native, Node.js)  
+- **Server:** `server.js`  
+- **APIs:**  
+  - Google Generative AI (for health insights & symptom analysis)  
+  - Hugging Face API (for AI-generated motivational quotes)  
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+---
 
-## Get a fresh project
+## 🏗️ Installation & Setup  
 
-When you're ready, run:
+### Prerequisites  
+Ensure you have the following installed:  
+- **Node.js & npm**  
+- **Expo CLI** (`npm install -g expo-cli`)  
+- **MongoDB** (for backend database)  
 
-```bash
-npm run reset-project
-```
+### Setup  
+1. **Clone the repository :**  
+   ```sh
+   git clone https://github.com/your-username/kaizen.git
+   cd kaizen
+   
+2. **Install dependencies :**
+   # Expo dependencies  
+   npm install expo-notifications react-native-screens react-native-safe-area-context react-native-gesture-handler react-native-reanimated react-native-vector-icons  
+   # API handling  
+   npm install axios  
+   # Backend dependencies  
+   npm install express cors mongoose dotenv  
+   # Google Generative AI  
+   npm install @google/generative-ai  
+   # Nodemon (for automatic server restart during development)  
+   npm install -g nodemon  
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+3. **Start the backend server :**
+   ```sh
+   cd backend
+   nodemon server.js
+4. **Run the React Native app :**
+   ```sh
+   expo start
